@@ -1,0 +1,32 @@
+cd C:\splitter
+java -Xmx9000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=1400000 --mapid=63221001 --geonames-file=cities15000.txt --polygon-file=central-fed-district.poly central-fed-district-latest.osm.pbf
+java -Xmx9000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=1400000 --mapid=63221100 --geonames-file=cities15000.txt --polygon-file=northwestern-fed-district.poly northwestern-fed-district-latest.osm.pbf
+java -Xmx9000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=1400000 --mapid=63221010 --geonames-file=cities15000.txt --polygon-file=north-caucasus-fed-district.poly north-caucasus-fed-district-latest.osm.pbf
+java -Xmx9000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=1400000 --mapid=63211001 --geonames-file=cities15000.txt --polygon-file=rhone-alpes.poly rhone-alpes-latest.osm.pbf
+
+java -Xmx9000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=1400000 --mapid=63221001 --geonames-file=cities15000.txt --polygon-file=russia.poly russia-latest.osm.pbf
+
+cd C:\mkgmap
+java -Xmx9000M -jar mkgmap.jar -c osm.args 6324.typ *.osm.pbf
+
+
+java -Xmx8000M -jar mkgmap.jar -c osm.args *.osm.pbf
+java -Xmx8000M -jar mkgmap.jar --gmapsupp *.img 6324.typ
+java -Xmx4000M -jar mkgmap.jar -c osm.args -c splitter\template.args
+java -Xmx8000M -jar josm-tested.jar
+java -Xmx1000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=1600000 --mapid=63245001 --geonames-file=cities15000.txt 07.osm
+java -Xmx1000M -jar mkgmap.jar -c osmNL.args -c splitter\template.args
+java -Xmx1000M -jar mkgmap.jar --gmapsupp *.img 10010.typ
+
+
+
+Изогипсы
+Скачать Osmconvert и запустить директорию из командной строки
+Скачать линии рельефа http://develop.freizeitkarte-osm.de/ele_20_100_500/
+Запустить команду для извлечения линий рельефа: 
+osmconvert Hoehendaten_Freizeitkarte_NOR.osm.pbf -o=Hoehendaten.o5m
+Запустить команду для объединения файлов:
+osmconvert --drop-version Hoehendaten.o5m norway-latest.osm.pbf -o=norway-latest2.osm.pbf
+
+
+java -Xmx1000M -jar mkgmap.jar -c optionsfile.args *.osm.pbf
