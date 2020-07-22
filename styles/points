@@ -1,0 +1,415 @@
+﻿#Не отображать не относящиеся к mkgmap line2poi теги
+amenity=* & mkgmap:line2poi=true {delete amenity}
+barrier=* & mkgmap:line2poi=true {delete barrier}
+barrier=* & mkgmap:area2poi=true {delete barrier}
+historic=* & mkgmap:line2poi=true {delete historic}
+landuse=* & mkgmap:line2poi=true {delete landuse}
+leisure=* & mkgmap:line2poi=true {delete leisure}
+man_made=* & mkgmap:line2poi=true {delete man_made}
+natural=* & mkgmap:line2poi=true {delete natural}
+rcn_ref=* & mkgmap:line2poi=true {delete rcn_ref}
+place=* & mkgmap:line2poi=true {delete place}
+shop=* & mkgmap:line2poi=true {delete shop}
+sport=* & mkgmap:line2poi=true {delete sport}
+tourism=* & mkgmap:line2poi=true {delete tourism}
+#amenity=restaurant & mkgmap:area2poi=true {delete restaurant}
+
+
+# Адресация
+mkgmap:country!=* & mkgmap:admin_level2=* { set mkgmap:country='${mkgmap:admin_level2}' }
+mkgmap:country!=* & addr:country=* { set mkgmap:country='${addr:country|country-ISO:}' }
+mkgmap:country!=* & is_in:country=* { set mkgmap:country='${is_in:country|country-ISO:}' }
+### 1. Назначаем регион как связку названий Района и Области ВСЕМУ КРОМЕ больших городов place=city|town
+mkgmap:country=RUS & mkgmap:region!=* & mkgmap:admin_level4=* & mkgmap:admin_level7!=* { set mkgmap:region='${mkgmap:admin_level4}, ${mkgmap:admin_level6}' }
+### 2. Назначаем региону название Области ДЛЯ больших городов place=city|town, где указание Района не нужно
+mkgmap:country=RUS & mkgmap:region!=* & mkgmap:admin_level4=* { set mkgmap:region='${mkgmap:admin_level4}' }
+# 3. Блокируем попапдание в объекты admin_level5 (название городского района)
+mkgmap:country=RUS & mkgmap:city!=* & mkgmap:admin_level5=* { delete mkgmap:admin_level5 } 
+# 4. Блокируем попапдание в объекты admin_level8 (название городского или сельского поселения, волости)
+mkgmap:country=RUS & mkgmap:city!=* & mkgmap:admin_level8=* { delete mkgmap:admin_level8 } 
+### 5. Назначаем имя региона для ВСЕГО ВНУТРИ полигонов place Мск и СПб (подставной admin_level7) как Федеральный Округ
+### Точки place=suburb с названиями городских районов СПб и Мск обрабатываются как и другие точки больших городов
+mkgmap:country=RUS & mkgmap:city!=* & place!=suburb & (mkgmap:admin_level7='Санкт-Петербург' | mkgmap:admin_level7='Москва') { set mkgmap:region='${mkgmap:admin_level3}' }
+### 6. Назначаем имя НП для ВСЕГО ВНУТРИ остальных полигонов place больших городов (подставной admin_level7) как название города (имя полигона place)
+mkgmap:country=RUS & mkgmap:city!=* & mkgmap:admin_level7=*  { set mkgmap:city='${mkgmap:admin_level7}' } 
+### 7. Назначаем имя НП для ВСЕГО ВНУТРИ остальных полигонов place сел, деревень (подставной admin_level11) как название деревни (имя полигона place)
+mkgmap:country=RUS & mkgmap:city!=* & mkgmap:admin_level11=* { set mkgmap:city='${mkgmap:admin_level11}' }
+mkgmap:region!=* & mkgmap:admin_level6=* { set mkgmap:region='${mkgmap:admin_level6}' } 
+mkgmap:region!=* & mkgmap:admin_level5=* { set mkgmap:region='${mkgmap:admin_level5}' } 
+mkgmap:region!=* & mkgmap:admin_level4=* { set mkgmap:region='${mkgmap:admin_level4}' } 
+mkgmap:region!=* & mkgmap:admin_level3=* { set mkgmap:region='${mkgmap:admin_level3}' } 
+mkgmap:region!=* & is_in:county=* { set mkgmap:region='${is_in:county}' } 
+mkgmap:city!=* & mkgmap:admin_level8=* { set mkgmap:city='${mkgmap:admin_level8}' } 
+mkgmap:city!=* & mkgmap:admin_level7=* { set mkgmap:city='${mkgmap:admin_level7}' } 
+mkgmap:city!=* & mkgmap:admin_level9=* { set mkgmap:city='${mkgmap:admin_level9}' } 
+mkgmap:city!=* & mkgmap:admin_level10=* { set mkgmap:city='${mkgmap:admin_level10}' } 
+mkgmap:city!=* & is_in:city=* { set mkgmap:city='${is_in:city}' }
+mkgmap:city!=* & addr:city=* { set mkgmap:city='${addr:city}' }
+mkgmap:postal_code!=* & mkgmap:postcode=* { set mkgmap:postal_code='${mkgmap:postcode}' } 
+mkgmap:postal_code!=* & addr:postcode=* { set mkgmap:postal_code='${addr:postcode}' } 
+mkgmap:street!=* & addr:street=* { set mkgmap:street='${addr:street}' }
+mkgmap:street!=* & addr:housename=* { set mkgmap:street='${addr:housename}' }
+mkgmap:housenumber!=* & addr:housenumber=* & addr:unit=* { set mkgmap:housenumber='${addr:housenumber} ${addr:unit}' }
+mkgmap:housenumber!=* & addr:housenumber=* { set mkgmap:housenumber='${addr:housenumber}' }
+mkgmap:phone!=* & phone=* { set mkgmap:phone='${phone}' }
+mkgmap:phone!=* & contact:phone=* { add mkgmap:phone='${contact:phone}' }
+mkgmap:is_in!=* & is_in=* { set mkgmap:is_in='${is_in}' }
+
+ele=* & ele ~ '^[+-]?(?:\d+\,?\d*|\d*\.?\d+)[\r\n]*$' {add altitude=number} #указать высоту
+ele=* & altitude!=number  {add altitude=no_number}
+#name=* { name '${name|subst:"проспект=>пр."|subst:"Mo-Su=>Пн-Вс"|subst:"Parc=>Парк"|subst:"Площадь=>пл."|subst:"Храм=>хр."|subst:"Lac=>оз."|subst:"Square=>скв."|subst:"озеро=>оз."|subst:"пруд=>пр."|subst:"Jardin=>Сад"|subst:"Eglise=>ц."|subst:"Esplanade=>пл."|subst:"церковь=>ц."}' }
+
+#ВОДНЫЙ ОТДЫХ
+leisure=beach_resort | natural=beach | leisure=swimming_area {name '${name} (пляж)' | 'Пляж' } [0x2C08 resolution 22] #пляж
+natural=spring & hot=yes {name '${name} (горяч. источник)' | 'Горячий источник' } [0x2C0C resolution 23 continue] # источник горячий
+tourism=spa_resort | amenity=spa {name 'Спа: ${name}' | 'Спа' } [0x2C0C resolution 24 continue]  #Спа
+leisure=sauna | amenity=sauna | amenity=public_bath {name 'Баня: ${name}' | 'Баня' }  [0x2C0C resolution 24] # баня или душ 
+amenity=shower {name 'Душ: ${name}' | 'Душ' } [0x2F19 resolution 24] # Душ
+
+#ТРАНСПОРТ (голубой)
+building=train_station & mkgmap:area2poi=true & name ~ '.*(вокзал|Вокзал).*'  [0x281b resolution 20] # Вокзал
+railway=station | amenity=bus_station [0x281F resolution 19-21 continue] #Станции (очень КРУПНЫЙ)
+#для каталога:
+amenity=bus_station {name 'Ав. ст. ${name}' | 'Автостанция' } [0x2F08 resolution 24 continue] # автостанция
+(railway=station | railway=halt) & station!=subway {name 'ж/д ст. ${name}' | 'ж/д станция' } [0x2F08 resolution 24 continue] # станция
+railway=station & (station=subway | subway=yes) { name  'м. ${name|subst:"проспект=>пр."}' } [0x2F08 resolution 24 continue] # метро
+#иконки:
+amenity=bus_station [0x2818 resolution 21-24] # вокзалы и станции
+(railway=station | railway=halt) & station!=subway   [0x280e resolution 21-24] # вокзалы и станции
+railway=station & (station=subway | subway=yes) {delete 'name'}  [0x2808 resolution 21-24] # метро
+railway=subway_entrance {name '${ref}' } [0x2902 resolution 24] # вход в метро
+(aeroway=aerodrome | aeroway=airport) | (aeroway=terminal & mkgmap:area2poi!=true) { name  '${name}' } [0x280a resolution 19-24 continue] # Аэропорт
+(aeroway=aerodrome | aeroway=airport) | (aeroway=terminal & mkgmap:area2poi!=true) { name  '${name}' } [0x2f04 resolution 24]
+railway=tram_stop | highway=bus_stop { name  '${name}' } [0x2F0B resolution 24] #автобусная остановка
+
+#ЕДА (красный)
+amenity=restaurant & (addr:city='Москва' | mkgmap:city='Москва') [0x280c resolution 21-24 continue] #рестораны крупно (в городах)
+#amenity=restaurant & mkgmap:city!=* [0x280c resolution 21-24 continue] #рестораны крупно (вне городов)
+cuisine = sea_food | cuisine = fish | cuisine = seafood | cuisine = fish_and_chips [0x2a0b resolution 24] # рыбная кухня
+cuisine = barbecue | cuisine = escalope | cuisine = kebab | cuisine = kebab | cuisine = steak_house [0x2A03 resolution 24] # мясные рестораны
+cuisine = pizza [0x2A0A resolution 24] # пицца
+cuisine = uzbek {name 'узбек: ${name}' } [0x2A0C resolution 24] # узбексикий
+cuisine = sushi | cuisine = asian | cuisine = japanese | cuisine = korean [0x2a02 resolution 24] #
+cuisine = chinese [0x2A04 resolution 24] # китайский
+amenity=restaurant & cuisine=french [0x2a0f resolution 21-24] # французский ресторан
+amenity=restaurant & cuisine=italian [0x2a08 resolution 21-24] # итальянский ресторан
+amenity=restaurant [0x2A01 resolution 21-24] # ресторан
+shop=confectionery | shop=chocolate | craft=confectionery | shop=pastry | cuisine = donut | cuisine = dessert  [0x2A0D resolution 24] # кандитерская
+shop=bakery | shop=bakers {name '${name} (булочная)' } [0x2A0D resolution 24] # булочная
+amenity=ice_cream | shop=ice_cream | cuisine=ice_cream [0x2a05 resolution 24] # мороженое
+shop=cheese {name '${name} (сыродельня)' }[0x2a06 resolution 24 ] # сыродельни
+amenity=fast_food  [0x2a07 resolution 24] # забегаловка
+amenity=food_court [0x2a07 resolution 24 default_name 'Фудкорд'] 
+amenity=cafe | cuisine=coffee_shop [0x2a0e resolution 24] # кафе
+craft=beekeeper [0x2a13 resolution 24] # пасека
+natural=spring | man_made=water_well | amenity=drinking_water | amenity=water_point  [0x2816 resolution 21-23 continue] # вода (КРУПНЫЙ)
+amenity=drinking_water | amenity=water_point [0x2A09 resolution 24 default_name 'Вода'] # вода
+amenity=bar | amenity=biergarten | amenity=pub  [0x2A10 resolution 24] # Бар или паб
+
+man_made=water_well {name '${name} (колодец)' | 'Колодец' } [0x6414 resolution 24] #колодец (man_made=water_tap колонка)
+natural=spring & hot!=yes {name '${name} (источник)' | 'Источник' }  [0x6509 resolution 23] # источник
+craft=winery | drink:wine=yes | tourism=wine_cellar | shop=winery [0x280f resolution 20-23 continue] #винодельни (КРУПНЫЙ)
+craft=winery | drink:wine=yes | tourism=wine_cellar | shop=winery [0x2C0A resolution 24] # винодельни
+
+#НОЧЛЕГ (зелёный)
+amenity=love_hotel {name 'отель на час: ${name}' }  [0x2b07 resolution 24] # отель гостиница на час
+tourism=hostel {name 'хостел: ${name}' }  [0x2b00 resolution 24] # хостел
+tourism=hotel & stars!=* [0x2B01 resolution 24 continue] # гостиница
+tourism=hotel & stars=5 {name '${name} ***** ' } [0x2B01 resolution 24 continue]  #звёзды
+tourism=hotel & stars=4 {name '${name} **** ' } [0x2B01 resolution 24 continue]  #звёзды
+tourism=hotel & stars=3 {name '${name} *** ' }  [0x2B01 resolution 24 continue]  #звёзды
+tourism=hotel & stars=2 {name '${name} ** ' } [0x2B01 resolution 24 continue]  #звёзды
+tourism=motel {name 'мотель: ${name}' } [0x2B01 resolution 24]  #звёзды
+tourism=hotel & stars=5 {delete 'name'}  [0x2b09 resolution 24]  #звёзды
+tourism=hotel & stars=4 {delete 'name'}  [0x2b10 resolution 24]  #звёзды
+tourism=hotel & stars=3 {delete 'name'}  [0x2b11 resolution 24]  #звёзды
+tourism=hotel & stars=2 {delete 'name'}  [0x2b12 resolution 24]  #звёзды
+tourism=hotel | tourism=motel  {delete 'name'}  [0x2803 resolution 20-22 continue] #гостиница Крупно
+tourism=hotel | tourism=motel  {delete 'name'}  [0x2903 resolution 23-24] #гостиница
+(tourism=guest_house | tourism=chalet | tourism=alpine_hut | tourism=apartment) & phone=* [0x2b02 resolution 24] # гостевой дом или аппартаменты
+tourism=camp_site {delete 'name'} [0x2800 resolution 20-23 continue] #кемпинг места(КРУПНЫЙ)
+tourism=camp_site {name 'кемпинг: ${name}' } [0x2B03 resolution 24] # кемпинг
+camp_site=reception [0x4003 resolution 24] # ресепшен в кемпинге
+resort=recreation_center | leisure=resort | resort=tourist_camp {name 'база отдыха: ${name}' } [0x2b04 resolution 24] # база отдыха / Туристическая база
+resort=sanatorium | resort=pension {name 'санаторий: ${name}' }  [0x2b06 resolution 24] # санаторий или пансионат
+tourism=caravan_site [0x2B05 resolution 24] # Иконку
+
+
+amenity=fuel & fuel:diesel=no {delete 'name'} [0x2811 resolution 22 continue] #заправки (КРУПНЫЙ)
+amenity=fuel {delete 'name'} [0x2804 resolution 22 continue] #заправки (КРУПНЫЙ)
+
+
+#amenity=charging_station { name '${name} (${voltage}v)' | '${name}' | '${voltage}v' } [0x2f16 resolution 19] # Электрозаправки
+#amenity=fuel & name ~ '.*(BP).*' [0x2F0F resolution 24]
+
+amenity=fuel & shop=* { name '${brand} (+магазин)' | '${operator}: ${name} (+магазин)' | '${name} (+магазин)' | '${operator} (+магазин)'} [0x2e06 resolution 24] #заправки с магазинами
+amenity=fuel & fuel:diesel=no {name'(б/д) ${brand} ' | '(б/д) ${operator}: ${name} ' | '(б/д) ${name}' | '(б/д) ${operator}' } [0x2f01 resolution 24]
+amenity=fuel { name '${brand}' | '${operator}: ${name}' | '${name}' | '${operator}'} [0x2f01 resolution 24]
+
+amenity=ferry_terminal | amenity=ferry | amenity=cable_ferry | ferry=yes [0x2806 resolution 21 continue] # переправы (КРУПНЫЙ)
+amenity=ferry_terminal | amenity=ferry | amenity=cable_ferry | ferry=yes { name '${name} (${opening_hours})' | '${opening_hours}' |'${name}' |   '${operator}' | '${note}' } [0x2F09 resolution 24] # переправы
+route=ferry & motorcar!=no & motor_vehicle!=no & vehicle!=no & ferry!=footway & mkgmap:line2poitype=mid {name '${name} (${opening_hours} ${duration}' | 'operating ${opening_hours} ${duration}' | '${name} ${duration}' | '${name}'  } [0x281A resolution 20 continue] # переправы (маршрут крупно)
+route=ferry & motorcar!=no & motor_vehicle!=no & vehicle!=no & ferry!=footway & mkgmap:line2poitype=mid {name '${name} (${opening_hours} ${duration}' | 'operating ${opening_hours} ${duration}' | '${name} ${duration}' | '${name}'  } [0x2f09 resolution 24] # переправы (маршрут)
+
+barrier=toll_booth [0x280D resolution 24] #Толлы (АВТО)
+amenity=parking_entrance [0x2809 resolution 24] #Въезды на парковки (АВТО)
+highway=rest_area [0x2810 resolution 22-24 continue] #зона отдыха
+
+highway=motorway_junction  {name '${ref}' | '${name}' } [0x2813 resolution 23]  #развязки (АВТО)
+leisure=outdoor_seating [0x4002 resolution 24] #веранда ресторана 
+tourism=picnic_site | amenity=bbq | leisure=picnic_table  [0x2904 resolution 24] # место для пикника
+service=tyres [0x2F0A resolution 24] # шиномонтаж
+shop=car_repair | amenity=vehicle_inspection | (shop=car & service=repair) | highway=services [0x2f03 resolution 24] # СТО
+amenity=compressed_air [0x2f13 resolution 24 default_name 'Насос'] # насос
+amenity=car_wash [0x2f0e resolution 24] # автомойка
+shop=car_parts | shop=car [0x2f07 resolution 24 continue] # запчасти
+shop=car_dealer {name 'Ав. салон ${name}' }  [0x2f07 resolution 24] # автосалон
+amenity=car_rental | amenity=car_sharing |  shop=car_rental  [0x2f02 resolution 24] # прокат авто
+
+#МАГАЗИНЫ (оранжевый)
+shop=convenience | shop=butcher | shop=dairy | shop=pasta | shop=seafood | shop=deli | shop=farm | shop=general { name  '${name}' }  [0x2814 resolution 23 continue] # магазинчики
+shop=convenience |shop=butcher | shop=dairy | shop=pasta | shop=seafood | shop=deli | shop=farm | shop=general  { name  '${name}' }  [0x2E01 resolution 24] # магазинчики
+
+amenity=marketplace | shop=greengrocer [0x2E02 resolution 24] # рынок
+shop=supermarket {delete 'name'} [0x2814 resolution 21 continue] # супермаркет
+shop=supermarket {name'${name} ${opening_hours|subst:"Mo-Su=>Пн-Вс"}  '| '${opening_hours}' | '${name}' } [0x2e03 resolution 24 ]
+shop=mall & mkgmap:area2poi=true & name=* [0x2812 resolution 20 continue] # моллы ПРОПИСАТЬ названия всех молов
+shop=mall [0x2e04 resolution 24 continue]
+amenity=pharmacy | shop=herbalist {name'${name} ${opening_hours} '| '${opening_hours}' | '${name}' } [0x2e05 resolution 24] # аптеки
+shop=clothes | shop=fashion | shop=shoes | shop=department_store [0x2e07 resolution 24 continue] # одежда и обувь (разделить)
+shop=shoes {name '${name} (обувь)' }  [0x2e07 resolution 24 continue] # одежда и обувь (разделить)
+
+shop=outdoor | shop=sports [0x2E12 resolution 24 continue] # спортивные магазины 
+shop=bicycle | amenity=bicycle_repair_station | amenity=vending_machine & vending=bicycle_tube | service:bicycle:repair=yes { name  'Велосипедный ${name}' }  [0x2E12 resolution 24 continue] #веломагазины
+shop=bicycle | amenity=bicycle_repair_station | amenity=vending_machine & vending=bicycle_tube | service:bicycle:repair=yes [0x2807 resolution 22 continue] #веломагазины (КРУПНЫЙ)
+
+shop=florist {name'${name} ${opening_hours} '| '${opening_hours}' | '${name}' }  [0x2e0f resolution 24] # цветочные
+shop=gift [0x2e10 resolution 24 continue] # подарки
+shop=baby_goods | shop=toys | shop=party {name '${name} (игрушки)' } [0x2e10 resolution 24 continue] # игрушки
+shop=antiques | shop=art | shop=collector | shop=trophy {name '${name} (искусство)' }  [0x2e10 resolution 24] # антикварные лавки
+#entrance=yes [0x2e1a resolution 24] # входы
+shop=alcohol | shop=beverages [0x2E13 resolution 24] # алкоголь 
+shop=garden_centre | shop=garden_furniture [0x2E08 resolution 24] # садовые центры
+shop=* & shop ~ '(appliance|doityourself|electrical|hardware|houseware|trade|tiles|furniture)' [0x2E09 resolution 24] # хозяйственные магазины
+shop=computer | shop=robot | shop=electronics | shop=hifi | shop=mobile_phone | shop=photo | shop=camera [0x2E0B resolution 24] # электронника и фото
+shop=fishing | shop=hunting [0x2E0A resolution 24 continue] # охотник-рыболов
+shop=weapons {name '${name} (оружее)' }  [0x2E0A resolution 24] # оружие
+shop=stationery [0x2E0D resolution 24] # канцелярские
+#shop=kiosk | shop=newsagent [0x2e12 resolution 24] # киоски и газетные
+#shop=copyshop [0x2e13 resolution 24] # копировальни
+#shop=chemist | shop=cosmetics [0x2e14 resolution 24] # химия и косметика
+
+#ПОДДЕРЖКА (сереневый)
+(amenity=doctors | amenity=clinic | amenity=hospital) & emergency=* {name 'Травмпункт ${name}' | 'Травмпункт' } [0x3002 resolution 24 continue] # травмпункт
+amenity=hospital [0x3002 resolution 23 continue] # больница
+amenity=bureau_de_change {name '${name} (обменник)' |  'Обменник' } [0x2f1e resolution 24] # Обменники
+amenity=bank [0x2f06 resolution 24] # банки
+amenity=atm {name '${name} (банкомат)' |  'Банкомат' } [0x2f1D resolution 24] # банкоматы
+amenity=waste_disposal | amenity=recycling [0x2f1C resolution 24] # мусорки
+amenity=veterinary | amenity=animal_shelter {name '${name} (ветеринар)' |  'Ветеринар' } [0x2F0D resolution 24] # ветеринарные
+amenity=post_office | amenity=post_depot [0x2F05 resolution 24] # почта
+amenity=police [0x3001 resolution 24] # полиция
+amenity=courthouse [0x3004 resolution 24] # суды
+amenity=brothel {name '${name} (бардель)' |  'Бардель' }  [0x2D04 resolution 24 continue] # бардели
+amenity=stripclub {name '${name} (стрип-клуб)' |  'Стрип-Клуб' }  [0x2D04 resolution 24 continue] # бардели
+amenity=swingerclub {name '${name} (свингиры)' |  'Свингиры' }  [0x2D04 resolution 24 ] # бардели
+amenity=border_control | barrier=border_control [0x3006 resolution 24] # Таможня
+amenity=public_service [0x3003 resolution 24] #МФЦ
+#office=notary [0x3008 resolution 24] # Натариусы
+#amenity=dentist [0x3009 resolution 24] #стоматолог
+shop=dry_cleaning | shop=laundry [0x2F15 resolution 24] # прачечные и химчистки
+amenity=fire_station| amenity=rescue_station [0x3008 resolution 24] # пажарная станция
+amenity=embassy & country=RU [0x300C resolution 24] # посольство РФ
+highway=elevator  [0x4006 resolution 24] # лифт
+amenity=shelter | tourism=wilderness_hut [0x6402 resolution 24] # укрытие (беседка или хижина)
+#amenity=* & amenity ~ '.*restaurant.*' [0x2a00 resolution 24]
+#building=church | building=chapel | building=cathedral { name '${name}' | '${note}' | '${description}'} [0x2c0b resolution 24]
+#(sport=swimming | leisure=swimming_pool | amenity=swimming_pool) & mkgmap:area2poi!=true & access!=private { name '${name} ${description}' | '${name}' | '${description}' } [0x2d09 resolution 24]
+amenity=social_facility [0x2F14 resolution 24] # Соцобслуживание
+amenity=community_centre | amenity=concert_hall | amenity=conference_centre  [0x3005 resolution 24] # Концертный зал
+office=government | amenity=townhall [0x3007 resolution 24] # Правительственные
+amenity=prison [0x3009 resolution 24] # Тюрьмы
+
+
+#ОТДЫХ (Коричневый)
+tourism=viewpoint [0x2802 resolution 21-24 continue] #красивые места(КРУПНЫЙ)
+tourism=viewpoint { name  '${name}' } [0x2C04 resolution 24] 
+tourism=attraction [0x2801 resolution 22-23 continue] #Примечательность
+tourism=attraction { name  '${name}' } [0x2c00 resolution 24 continue] # Примечательность
+(leisure=garden | leisure=park) & name=* [0x2C06 resolution 24 continue] # сад
+amenity=library [0x2C03 resolution 24] # Библиотека
+amenity=cinema [0x2d03 resolution 24] # Кино
+tourism=theme_park | tourism=resort | leisure=water_park {name'${name} ${description}' | '${name}' | '${description}' } [0x2c01 resolution 24] # тематические парки / аквопарки
+tourism=museum | tourism=gallery | amenity=arts_centre [0x2c02 resolution 24] # музеи
+amenity=coworking_space | leisure=hackerspace [0x2f11 resolution 24] # коворкинг
+amenity=zoo | amenity=ranger_station | amenity=animal_boarding| amenity=animal_shelter | attraction=animal | tourism=aquarium | tourism=zoo [0x2c07 resolution 24] # зоопарк
+historic=building | historic=castle | historic=church | historic=city_gate | historic=fort| historic=manor | historic=monastery | historic=tower [0x2c09 resolution 24] # достопримечательность
+historic=battlefield { name  '${name}' } [0x640B resolution 24] # место битвы
+amenity=kindergarten | amenity=college | amenity=school | amenity=music_school | amenity=university [0x2C05 resolution 24] # Учебные заведения
+historic=archaeological_site | historic=ruins | historic=wreck [0x2c0e resolution 24] # архиологический памятник
+historic=memorial | historic=monument| historic=aircraft | tourism=artwork | tourism=locomotive| tourism=ship | man_made=obelisk [0x2c11 resolution 24] # памятник
+amenity=boat_rental | amenity=boat_sharing | sport=canoe | sport=rowing | sport=salling | sport=kitesurfing | kayak_rental=* {name '${name} (лодки)' |  'Лодки' }  [0x2C19 resolution 24] # прокат лодок
+leisure=dance | leisure=escape_game [0x2C18 resolution 24] # школы танцев и квесты
+amenity=place_of_worship { name '${name} ${start_date}' | '${start_date}' | '${name}'  } [0x2C0B resolution 24 continue] # Культовое место
+(amenity=place_of_worship | building=church) & (denomination=russian_orthodox | denomination=orthodox) [0x2C15 resolution 24] # церковь православная
+(amenity=place_of_worship & religion=christian) | building=church [0x2C10 resolution 24] # церковь
+building=mosque | (amenity=place_of_worship & religion=muslim)  [0x2C0D resolution 24] # мечеть
+amenity=theatre [0x2d01 resolution 24] # театр
+amenity=nightclub {name '${name} (ночной клуб)' } [0x2D02 resolution 24] # ночной клуб
+amenity=bicycle_rental [0x2C1A resolution 24] # прокат велосипедов велопрокат
+sport=billiards {name '${name} (бильярд)' }  [0x2D0C resolution 24] # бильярд
+sport=tennis & access!=private [0x2D05 resolution 24] # теннис
+amenity=winter_sports | sport=skiing [0x2D06 resolution 24] # лыжи
+leisure=bowling_alley {name '${name} (боулинг)' } [0x2D07 resolution 24 continue] # боулинг
+sport=laser_tag | leisure=amusement_arcade  {name '${name} (игровая)' } [0x2D07 resolution 24] # боулинг
+sport=skating [0x2d08 resolution 24] # каток
+(sport=swimming | leisure=swimming_pool | amenity=swimming_pool) & access!=private [0x2d09 resolution 24] # бассейн
+sport=karting [0x2d0a resolution 24] # картинг
+sport=Free_flying |sport=paragliding | sport=parachuting [0x2d0b resolution 24] # воздушный спорт
+leisurhistorice=horse_riding [0x2D12 resolution 24] # кони
+leisure=sports_center | leisure=fitness_centre [0x2D13 resolution 24] #  спрот-центры
+leisure=stadium | leisure=sports_center [0x2C16 resolution 24] # стадионы
+leisure=golf_course [0x4000 resolution 24]  # гольф
+
+#ОРИЕНТИРЫ КРУПНО
+man_made=lighthouse [0x1601 resolution 22] #маяк 
+man_made=pier [0x1602 resolution 23] #пирс 
+leisure=marina  [0x1604 resolution 24] # пристань
+leisure=fishing {name '${name} (рыба)' |  'Рыба' } [0x6508 resolution 24] # рыбалка
+
+natural=peak | natural=cliff {name '${name|def:} ${ele|def:}'}  [0x1040C resolution 20-24]  #информация (каталог препятствий) [0x6607 resolution 24]
+natural=volcano {name '${name|def:} ${ele|def:}'} [0x1040b resolution 20-24] # вулкан
+mountain_pass=yes & ele!=* {name '${name|def:}' } [0x1040a resolution 20-24] # перевал
+
+tower:type = cooling [0x6419 resolution 22] # Градирня
+(man_made=tower & tower:type=communication) | man_made=mast [0x6411 resolution 22] #радио башня
+man_made=tower & tower:type!=defensive & tower:type!=lighting & tower:type!=observation & tower:type!=watchtower  & tower:type!=minaret & tower:type!=cooling [0x6417 resolution 22] #башня
+natural=reef [0x6501 resolution 24] # риф 
+amenity=fountain [0x6511 resolution 24] # фонтан
+waterway=waterfall [0x6512 resolution 24] # водопад
+natural=cave_entrance [0x6601 resolution 24] # пещера
+power_source=wind | man_made=power_wind | generator:source=wind | man_made=windpump | man_made=windmill [0x2819 resolution 22] # ветряк
+man_made=chimney [0x6418 resolution 22] # труба 
+natural=water & name=* [0x650D resolution 22] # oзеро
+man_made=bridge & name=* [0x6401 resolution 22] # мост
+man_made=bridge | bridge=yes & mkgmap:line2poi!=true [0x6401 resolution 24] # мост 
+military=bunker [0x6405 resolution 22] # бункер
+power=generator [0x6406 resolution 22] # электростанция
+man_made=water_tower | building=water_tower [0x6413 resolution 22] # водонапорная башня
+
+#ПРЕГРАДЫ
+#barrier=gate {set access = no} [0x5800 resolution 24 default_name 'ворота']
+barrier=full-height_turnstile {set barrier=turnstile}
+barrier=* & bicycle=*    { set mkgmap:bicycle='${bicycle|subst:private=>no}'; set mkgmap:car='${bicycle|subst:private=>no}' }
+barrier=* & foot=*       { set mkgmap:foot='${foot|subst:private=>no}' } 
+barrier=* & motorcar=*   { set mkgmap:car='${motorcar|subst:private=>no}' } 
+#Доступ. Если   access или subst = private, тогда no)
+barrier=* & access=*     { addaccess '${access|subst:private=>no}' }
+barrier=* & barrier ~ '(gate|entrance|lift_gate|stile|block|cycle_barrier|kissing_gate|turnstile|swing_gate|log|bump_gate)' { add mkgmap:housenumber='(${barrier})' ; add mkgmap:street='bicycle:${bicycle}' ; add mkgmap:postal_code='open: ${opening_hours}' ;  }
+barrier=* & barrier ~ '(gate|entrance|turnstile|bump_gate|hampshire_gate|sally_port|stile|wicket_gate)' & (access=no | access=private | entrance=service) [0x2908 resolution 24] # ворота закрытые
+barrier=* & barrier ~ '(gate|entrance|turnstile|bump_gate|hampshire_gate|sally_port|stile|wicket_gate|lift_gate)' & entrance=main [0x2909 resolution 24] # центральные ворота
+barrier=* & barrier ~ '(gate|entrance|turnstile|bump_gate|hampshire_gate|sally_port|stile|wicket_gate)' [0x2905 resolution 24] # ворота
+barrier=* & barrier ~ '(lift_gate|swing_gate|log|chain)' [0x2906 resolution 24] # шлагбаум
+
+barrier=* & barrier ~ '(block|bollard|spikes|jersey_barrier)' {set mkgmap:car=no}  [0x2907 resolution 24] # блок ПОМЕНЯТЬ
+barrier=stile | barrier=turnstile  {add mkgmap:foot=yes; add access=no} # [ resolution 24] # турникет (вращающийся)
+#barrier=* & barrier ~ '(cycle_barrier|kissing_gate)' [0x3203 resolution 23]
+
+
+
+#снижение скорости
+highway=traffic_signals { add mkgmap:road-speed = '-4' } #достаточно -3 # светофор
+crossing=traffic_signals { add mkgmap:road-speed = '-4' } # регулируемый переход
+highway=crossing { add mkgmap:road-speed = '-1' } # нерегулируемый переход crossing=uncontrolled | crossing=unmarked 
+railway=level_crossing  { add mkgmap:road-speed = '-4' } [0x2805 resolution 22] # ЖД переезд
+highway=speed_camera { add mkgmap:road-speed = '-1' } # Камера
+highway=give_way { add mkgmap:road-speed = '-1' } # Уступить дорогу
+ford=yes  { add mkgmap:road-speed = '-6' } [0x6505 resolution 24] # брод
+barrier=* { add mkgmap:road-speed = '-1' } # любой барьер (ЛЕЖАЧИЙ?)
+highway=steps & (layer>-2 | layer!=*) & mkgmap:line2poitype=mid { add mkgmap:road-speed = '-7' } # ступени (если маршрутиризируемы)
+highway=steps & (layer>-2 | layer!=*) & mkgmap:line2poitype=end { add mkgmap:road-speed = '-7' } # ступени (если маршрутиризируемы)
+
+# roi на основе линий
+bicycle:conditional=* & mkgmap:line2poitype=start { name 'bicycle=${bicycle:conditional}' } [0x2815 resolution 23] # ограничение для вела
+access:conditional=* & bicycle!=* { name 'access=${access:conditional}' } [0x2815 resolution 23] # ограничение для вела
+#scenic=yes & mkgmap:line2poitype=mid {delete 'name'} [0x2C04 resolution 23] # красивая дорога
+#(highway=cycleway | bicycle=yes | bicycle=permissive | bicycle=designated) & opening_hours=* & route!=ferry & mkgmap:line2poitype=mid { name 'open (${opening_hours})' } [0x2808 resolution 24]
+#highway=* & highway!=motorway & highway!=motorway_link & highway!=trunk & highway!=trunk_link & highway!=footway & bicycle!=no & (toll=yes | toll:bicycle=yes) & toll:bicycle!=no & service!=parking_aisle & mkgmap:line2poitype=mid {delete 'name'; delete 'ref';} [0x2811 resolution 24]
+#highway=cycleway & bicycle=no & moped!=* & mkgmap:line2poitype=inner { name '${note|def:}' } [0x5600 resolution 24]
+#highway=cycleway & bicycle!=* & access=no & mkgmap:line2poitype=inner { name '${note|def:}' } [0x5600 resolution 24]
+#(highway=motorway | highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (tunnel=yes | tunnel=true | tunnel=1) & mkgmap:line2poitype=start [0x3203 resolution 24]
+highway!=path & highway!=footway & highway!=track & smoothness=* & smoothness ~ '.*(bad|horrible|impassable)' & mkgmap:line2poitype=mid {delete 'name'} [0x281C   resolution 24] # кочки
+
+# Названия водоёмов
+(natural=sea | natural=water | natural=bay | natural=fjord | natural=strait)  & name=* [0x1000 resolution 20-22 continue] #НАЗВАНИЕ водоёма
+
+#natural=water & mkgmap:area2poi=true {name '${name}' }  [0x0A00 resolution 22 continue]
+
+
+# Названия мест (ПРОВЕРИТЬ места, заданные точкой)
+#place=city {name '${name}' } [0x0600 resolution 12-20 continue]
+#place=town  {name '${name}' } [0x0600 resolution 16-20 continue]
+#place=village {name '${name}' } [0x0600 resolution 18-22 continue]
+#place=hamlet {name '${name}' } [0x0600 resolution 19-22 continue]
+#place=suburb {name '${name}' } [0x0600 resolution 20-22 continue]
+place=locality {name '${name}' } [0x1e03 resolution 24 continue]
+
+place=city & mkgmap:area2poi!=true & (capital=2 | capital=yes | population>=750000)  [0x0600 resolution 12-17 continue]
+place=city & mkgmap:area2poi!=true & (capital=2 | capital=yes | population>=750000)  [0x0400 resolution 18]
+place=city & mkgmap:area2poi!=true & population>=200000  [0x0b00 resolution 15-15 continue]
+place=city & mkgmap:area2poi!=true & population>=200000  [0x0600 resolution 16-17 continue]
+place=city & mkgmap:area2poi!=true & (population<200000 | population!=*) [0x0b00 resolution 16-17 continue]
+place=city & mkgmap:area2poi!=true & population>=200000  [0x0400 resolution 18]
+place=city & mkgmap:area2poi!=true & (population<200000 | population!=*) [0x0600 resolution 18-19 continue]
+place=city & mkgmap:area2poi!=true & (population<200000 | population!=*) [0x0400 resolution 20]
+place=village & capital=* {set place=town; delete capital}
+place=town & name!=* [0x0a00 resolution 20]
+place=town & mkgmap:area2poi!=true & (population>=50000 | capital=*)   [0x0b00 resolution 16-17 continue]
+place=town & mkgmap:area2poi!=true & (population>=50000 | capital=*)  [0x0600 resolution 18-19 continue]
+place=town & mkgmap:area2poi!=true & (population>=50000 | capital=*)  [0x0400 resolution 20]
+place=town & mkgmap:area2poi!=true & (population<50000 | population!=*) [0x0b00 resolution 18-19 continue]
+place=town & mkgmap:area2poi!=true & (population<50000 | population!=*) [0x0600 resolution 20-21 continue]
+place=town & mkgmap:area2poi!=true & (population<50000 | population!=*) [0x0400 resolution 22]
+(place=village | place=hamlet) & name!=* [0x0a00 resolution 22]
+(place=village | place=hamlet) & mkgmap:area2poi!=true [0x0b00 resolution 20-21 continue]
+(place=village | place=hamlet) & mkgmap:area2poi!=true [0x0600 resolution 22-22 continue]
+(place=village | place=hamlet) & mkgmap:area2poi!=true [0x0400 resolution 23]
+place=suburb & name!=* {delete place}
+place=suburb & mkgmap:area2poi!=true [0x0a00 resolution 22-22 continue]
+place=suburb & mkgmap:area2poi!=true [0x0800 resolution 23]
+
+place=bay & name=* {name '${name}' } [0x1000 resolution 19-22 continue] # залив (чем отличается от natural=bay?)
+place=island & name=* {name '${name}' } [0x1000 resolution 18-20 continue] # остров
+natural=cape & name=* {name '${name}' } [0x1000 resolution 19-22 continue] # мыс
+
+#Природные объекты
+#(natural=peak | natural=volcano) & altitude=number    {name '${name|def:} (${ele|def:}m)'} [0x6616 resolution 21]
+#(natural=peak | natural=volcano) & altitude=no_number {name '${name|def:} (${ele|def:})'} [0x6616 resolution 21]
+(natural=rock | natural=stone | geological=*) &  name=* & mkgmap:area2poi!=true {name '${name}'} [0x6614 resolution 24] #камень
+#natural=tree [0x110C resolution 24] # дерево & name=*  
+
+#Названия полигонов
+(landuse=forest | natural=wood | leisure=park | leisure=garden | leisure=nature_reserve) &  name=* [0x1e01 resolution 22 continue] # лес
+(landuse=industrial | amenity=hospital | shop=mall) &  name=* [0x1e02 resolution 22 continue] # завод
+(landuse=industrial) &  name=* [0x2817 resolution 22] #
+place=square &  name=* [0x1e03 resolution 21 continue] # площадь
+#amenity=bus_station | (railway=station | railway=halt) & station!=subway  &  name=* [0x1e03 resolution 21] # станция
+
+#дополнительные опции:
+amenity=toilets | toilets=yes [0x2F0C resolution 24 default_name 'Туалет'] # туалеты
+(internet_access=wlan | internet_access=yes) & (internet_access:fee=no | internet_access:fee!=*) [0x2F12 resolution 24 default_name 'Интернет'] # интернет добавить continue если указывать в начале списка
+#toponym=water [0x6603 resolution 22] # ПРОВЕРИТЬ наличие в osm
+#toponym=* [0x1e03 resolution 22]
+
+(admin_level = 11 & boundary = administrative) [0x0900 resolution 23]
+
+#building=* & name=* [0x6405 resolution 24]
+#office=* & name=* {name '${name} (${office})'} [0x2900 resolution 24] # название контор
+#addr:housenumber=* & name=* [0x2900 resolution 24]
+addr:housename=* [0x2900 resolution 24] # номер дома
+
+
+<finalize> #прогон точек по дополнительным правилам
+# The finalizer section is executed for each element when a rule with an element type matches
+name=* { name '${name}' } # если есть назавание, указать название
+

@@ -1,0 +1,40 @@
+family-id: 6324
+product-id: 6
+series-name: OSM(Rus_v01)
+family-name: OSM (Rus)
+description: OSM (Rus)
+area-name: OSM_RUS
+country-name: Россия
+country-abbr: RUS
+style-file: Styles
+overview-mapname: 63240051
+#îáíîâëÿòü îòñþäà http://osm2.pleiades.uni-wuppertal.de/sea/latest/
+precomp-sea: sea.zip
+generate-sea: land-tag=natural=background
+#îáíîâëÿòü îòñþäà http://osm2.pleiades.uni-wuppertal.de/bounds/latest/
+bounds: bounds.zip
+#location-autofill=bounds
+location-autofill: is_in,nearest
+housenumbers
+code-page: 1251
+lower-case
+show-profiles: 1
+#dem: R.zip
+#dem-dists: 9942,9942,9942,13248,44176
+#overview-dem-dist=88368
+reduce-point-density: 4
+reduce-point-density-polygon: 8
+add-pois-to-areas
+add-pois-to-lines
+link-pois-to-ways
+polygon-size-limits=22:4, 17:2, 15:0
+preserve-element-order #ïîðÿäîê ïðîðèñîâêè äàííûõ
+name-tag-list = name:ru,name,name:en,int_name
+check-roundabouts # ïðîâåðèòü êîëüöà
+process-destination
+keep-going
+route
+index
+remove-ovm-work-files
+gmapsupp
+copyright-message: Leonov & Openstreetmap.org

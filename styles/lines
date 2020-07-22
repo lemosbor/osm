@@ -1,0 +1,195 @@
+# Назначить название улицы для поиска номера дома
+highway=* & name=* { set mkgmap:street='${name}' }
+#highway=motorway { name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; addlabel '${name} (${ref})' }
+#highway=trunk {name '${ref|highway-symbol:hbox} ${name}' | '${ref|highway-symbol:hbox}' | '${name}'; addlabel '${name} (${ref})' }
+#highway=primary {name '${ref|highway-symbol:box} ${name}' | '${ref|highway-symbol:box}' | '${name}'; addlabel '${name} (${ref})' }
+#include 'inc/address';
+
+# соркащение названий улиц
+highway=* { name '${name|subst:"переулок=>пер."|subst:"улица=>ул."|subst:"мост=>м."|subst:"gate=>ул."|subst:"проспект=>пр-т"|subst:"проезд=>пр-д"|subst:"разъезд=>раз."|subst:"тракт=>тр-т"|subst:"площадь=>пл."|subst:"имени=>им."|subst:"бульвар=>бл-р"|subst:"шоссе=>ш."|subst:"дорога=>дор."|subst:"тупик=>туп."|subst:"микрорайон=>мкр"|subst:"аллея=>алл."|subst:"линия=>лин."|subst:"(дублер)=>(дб.)"|subst:"набережная=>наб."|subst:"Rue=>ул."|subst:"Allée=>алл."|subst:"Place=>пл."|subst:"Passage=>пер."|subst:"Pont=>м."|subst:"Quai=>наб."|subst:"Avenue=>пр-т"|subst:"Boulevard=>бл-р"|subst:"Impasse=>пер."|subst:"Cours=>бл-р"|subst:"Chemin=>пр-д"|subst:"Route=>дор."|subst:"La Grande=>Б."|subst:"Большая=>Б."|subst:"Grand=>Б."|subst:"Большая=>Б."|subst:"Большой=>Б."|subst:"Малая=>М."|subst:"Малый=>М."|subst:"de Gaulle=>Де Голля"|subst:"général=>ген."|subst:"Gеnеral=>ген."|subst:"de la République=>Республики"|subst:"Jean Jaurès=>Жан Жореса"|subst:"Charles=>Шарля"}' }
+
+#объеденить типы дорог
+highway=motorway_link { set highway=motorway }
+highway=trunk_link { set highway=trunk }
+highway=primary_link { set highway=primary }
+highway=secondary_link { set highway=secondary }
+highway=tertiary_link { set highway=tertiary }
+highway=road { set highway=unclassified }
+highway=living_street { set highway=residential }
+highway=raceway {set highway=service}
+
+#Дороги для самолётов
+aeroway=runway [0x10117 resolution 20 continue with_actions]
+aeroway=taxiway [0x10117 resolution 23 continue with_actions]
+#aeroway=runway | aeroway=taxiway  [0x10601 resolution 20]
+
+man_made=cutline [0x1B road_class=0 road_speed=0 resolution 22 continue] # просека
+
+# Убрать метку шоссе с путей, которые не подходят для маршрутизации
+#highway=traffic_signals | highway=junction | highway=island | highway=centre_line | highway=traffic_island  {delete highway} 
+
+# Дать платным дорогам признак платных
+(highway=motorway | highway=trunk | highway=primary) & (toll=yes|toll=true) { set mkgmap:toll=yes }
+
+#Одностороннее движение для полос шоссе
+#highway=motorway { add oneway=yes }
+
+# Отметить не мощённые дороги
+(highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (surface=unpaved | surface=compacted | surface=fine_gravel | surface=gravel | surface=pebblestone | surface=grass_paver | surface=grass | surface=dirt |  surface=earth  | surface=mud | surface=sand |  surface=ground) { set mkgmap:unpaved=1 }
+(highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (tracktype=grade3 | tracktype=grade4 | tracktype=grade5)  { set mkgmap:unpaved=1 }
+(highway=track | highway=path)  { set mkgmap:unpaved=1 }
+
+#Снизить скорость
+highway=* & mkgmap:unpaved=1 { add mkgmap:road-speed = '-2' }
+(highway=footway | highway=bridleway | highway=path | highway=track) & (surface!=asphalt | surface!=paving_stones | surface!=concrete)  { add mkgmap:road-speed = '-2' }
+highway=steps { add mkgmap:road-speed = '-5' }
+(highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & mkgmap:unpaved!=1 & smoothness ~ '.*(bad|horrible|impassable)' { add mkgmap:road-speed = '-2' }
+(highway=motorway | highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (construction=* | disused=yes) { add mkgmap:road-speed = '-2' }
+
+#(highway=motorway | highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) {add mkgmap:way-has-pois = true }
+#highway=traffic_signals { add mkgmap:way-has-pois = true ; add mkgmap:road-speed = '-2' }
+#railway=level_crossing  { add mkgmap:way-has-pois = true ;  add mkgmap:road-speed = '-2' }
+#traffic_calming=*
+
+# Кочки
+#traffic_calming
+#smoothness ~ '.*(bad|horrible|impassable)' |
+
+# стоительство дорог
+highway=construction  {add access = no; add mkgmap:dead-end-check = false} [0x070 road_class=0 road_speed=1 resolution 23]
+
+# Круговое движение
+junction=roundabout & highway=motorway [0x0c road_class=4 road_speed=6 resolution 21 continue with_actions] # скорость можно увеличить до 7, что означает, что нет лимита
+junction=roundabout & highway=trunk [0x0c road_class=4 road_speed=5 resolution 21 continue with_actions]
+junction=roundabout & highway=primary [0x0c road_class=3 road_speed=2 resolution 21 continue with_actions] 
+junction=roundabout & highway=secondary [0x0c road_class=2 road_speed=1 resolution 21 continue with_actions]
+junction=roundabout & highway=tertiary [0x0c road_class=1 road_speed=1 resolution 21 continue with_actions]
+junction=roundabout & highway=unclassified [0x0c road_class=1 road_speed=1 resolution 21 continue with_actions]
+junction=roundabout & (highway=residential | highway=service) [0x0c road_class=0 road_speed=1 resolution 22 continue with_actions]
+
+# Показать стрелки для односторонок
+(highway=tertiary | highway=unclassified | highway=residential | highway=service) & (oneway=yes | oneway=1 | oneway=true | oneway=-1) [0x10005 resolution 24 continue with_actions]
+
+# Показать парковки (АВТО)
+(highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (parking:lane:right=parallel | parking:lane:right=diagonal | parking:lane:right=perpendicular | parking:lane:right=marked) [0x10010 resolution 24 continue with_actions]
+(highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (parking:lane:left=parallel | parking:lane:left=diagonal | parking:lane:left=perpendicular | parking:lane:left=marked) [0x10011 resolution 24 continue with_actions]
+(highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (parking:lane:both=parallel | parking:lane:both=diagonal | parking:lane:both=perpendicular | parking:lane:both=marked) [0x1001A resolution 24 continue with_actions]
+
+# Мосты и тунели
+(tunnel=yes | tunnel=true | tunnel=1) & (highway=motorway | highway=trunk | highway=primary | highway=secondary) [0x2A road_class=3 road_speed=2 resolution 20] # прорисовка по длине в метрах highway=service & length()>50
+(tunnel=yes | tunnel=true | tunnel=1) & (highway=tertiary | highway=unclassified | highway=residential | highway=service) [0x2A road_class=1 road_speed=1 resolution 23]
+
+#Зимник
+(highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service | highway=track) & winter_road=yes [0x0f road_class=1 road_speed=1 resolution 22 continue]
+
+
+(ncn_from_relation=yes | lcn_from_relation=yes | ncn_ref=* | lcn_ref=*) & state!=ncn_proposed | route=bicycle {name '${nref|highway-symbol:oval} (${nname|not-equal:nref})'| '${nref|highway-symbol:oval}'} [0x10 resolution 20-22 continue with_actions] #значки дорог
+
+highway=motorway {name '${ref|highway-symbol:box}'} [0x10000 resolution 17-19 continue]
+highway=motorway {name '${ref|highway-symbol:box}'} [0x10016 resolution 20-21 continue]
+highway=motorway [0x01 road_class=4 road_speed=7 resolution 22]
+highway=trunk {name '${ref|highway-symbol:box}'} [0x10000 resolution 17-19 continue]
+highway=trunk {name '${ref|highway-symbol:box}'} [0x10016 resolution 20-21 continue]
+highway=trunk [0x02 road_class=4 road_speed=6  resolution 22]
+highway=primary {name '${ref|highway-symbol:box}'} [0x10000 resolution 18-19 continue]
+highway=primary {name '${ref|highway-symbol:box}'} [0x10014 resolution 20-21 continue]
+highway=primary [0x06 road_class=3 road_speed=5  resolution 22]
+highway=secondary [0x10000 resolution 18-19 continue]
+highway=secondary [0x10014 resolution 20-21 continue]
+highway=secondary [0x04 road_class=2 road_speed=4  resolution 22]
+highway=tertiary [0x10018 resolution 20-21 continue]
+highway=tertiary [0x05 road_class=2 road_speed=3  resolution 22]
+highway=unclassified [0x22 resolution 20-23 continue]
+highway=unclassified [0x08 road_class=1 road_speed=3  resolution 24]
+highway=residential [0x22 resolution 20-22 continue]
+highway=residential [0x07 road_class=1 road_speed=2  resolution 23]
+highway=service [0x22 resolution 21-23 continue]
+highway=service [0x08 road_class=1 road_speed=1  resolution 24]
+
+# Добавляем запреты проезда для машин
+highway=* & motorcar=no | highway=* & vehicle=no | highway=* & motorcar=private | highway=* & motor_vehicle=no | highway=* & access=private {add motorcar=no; add taxi=no; add hgv=no}
+	
+#велодорожки и велопути (ВНИМАНИЕ) Изучить и назначить правила
+highway=cycleway [0x16 road_class=1 road_speed=2 resolution 22 continue] #специализированные дорожки (ВЕЛО)
+
+#cycleway=* #совмещённые с основной дорогой дорожки
+	
+#Тратуары, тропы, ступени
+
+highway=pedestrian | man_made=pier & area!=yes & (layer>-2 | layer!=*) [0x19 road_class=0 road_speed=0 resolution 23 continue] # тратуары и пирсы road_class=0 road_speed=0 (ВЕЛО)
+(highway=footway | highway=bridleway | highway=path) & (surface=asphalt | surface=paving_stones | surface=concrete) & area!=yes & (layer>-2 | layer!=*) [0x19 road_class=0 road_speed=0  resolution 23 continue] # мощённые тропинки road_class=0 road_speed=0 (ВЕЛО)
+highway=footway & area!=yes & (layer>-2 | layer!=*) & surface!=asphalt & surface!=paving_stones & surface!=concrete [0x0d road_class=0 road_speed=0 resolution 23 continue]
+(highway=bridleway | highway=path) & surface!=asphalt & surface!=paving_stones & surface!=concrete [0x0e road_class=0 road_speed=0 resolution 22 continue]
+highway=track & surface!=asphalt & surface!=paving_stones & surface!=concrete [0x0b road_class=0 road_speed=0 resolution 22 continue]
+highway=steps & (layer>-2 | layer!=*) [0x13 road_class=0 road_speed=0 resolution 23 continue] # (для ВЕЛО если хочется бегать по лестницам)
+#highway=steps & (layer>-2 | layer!=*) [0x13 road_class=0 road_speed=0 resolution 22 continue] # (для ВЕЛО если хочется бегать по лестницам)
+
+#ЖД
+railway=rail & covered=yes {add tunnel=yes}
+railway=rail & tunnel=yes  {delete highway} 
+railway=rail & tunnel!=yes & (trainroute=yes | highspeed=yes | usage=main) [0x10015 resolution 18-19 continue with_actions]
+railway=rail & tunnel!=yes & (trainroute=yes | highspeed=yes | usage=main) [0x14 resolution 20 continue]
+railway=rail & tunnel!=yes & (trainroute=yes | highspeed=yes | usage=main) [0x10114 resolution 20]
+railway=rail & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x10015 resolution 22-21 continue with_actions]
+(railway=abandoned | railway=rail) & highway!=* & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x14 resolution 23 continue]
+(railway=abandoned | railway=rail) & highway!=* & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x10114 resolution 23]
+
+railway=subway & (layer>0 | layer!=*)  [0x24 resolution 22]
+railway=tram [0x2c resolution 22]
+(railway=funicular | railway=narrow_gauge | railway=monorail) {name '${name}' | '${note}' | '${description}' | '${railway}' | '${aerialway}' } [0x23 resolution 23]
+
+#Лыжни
+piste:type=downhill & piste:difficulty=novice [0x10601 resolution 22 continue] #зелёная трасса 
+piste:type=downhill & piste:difficulty=easy [0x10602 resolution 22 continue] #синяя трасса 
+piste:type=downhill & piste:difficulty=intermediate [0x10603 resolution 22 continue] #красная трасса 
+piste:type=downhill & piste:difficulty=expert [0x10604 resolution 22 continue] #чёрная трасса 
+(piste:type=ice_skate | piste:type=nordic | piste:type=yes) [0x10605 resolution 22 continue]  #лыжня 
+
+#Фуникулёр
+(aerialway=cable_car | aerialway=gondola | aerialway=mixed_lift | highway=elevator)  {name '${name}' | '${note}' | '${description}' | '${aerialway}' | '${highway}' } [0x2d resolution 24]
+
+#Переправы
+route=ferry & vehicle!=no {name '${name|def:} ${opening_hours|def:}' | '${note}' } [0x10017  resolution 18-19 continue with_actions]
+route=ferry & vehicle!=no  {add mkgmap:ferry=1} [0x0a road_class=3 road_speed=1 resolution 20 continue]
+
+#Реки и пр.
+waterway=river & natural!=water & (layer>-1 | layer!=*) [0x18 resolution 18-19 continue]
+waterway=river & natural!=water & (layer>-1 | layer!=*) {name '${name}' } [0x1f resolution 20 continue]
+waterway=canal & natural!=water & (layer>-1 | layer!=*) [0x18 resolution 22-21 continue]
+waterway=canal & natural!=water & (layer>-1 | layer!=*) [0x1f resolution 23 continue]
+waterway=stream & natural!=water & (layer>-1 | layer!=*) & name=* [0x18 resolution 22-22 continue]
+waterway=stream & natural!=water & (layer>-1 | layer!=*) & name=* [0x1f resolution 23 continue]
+waterway=stream & natural!=water & (layer>-1 | layer!=*) & name!=* [0x18 resolution 24 continue]
+waterway=drain & natural!=water & (layer>-1 | layer!=*) [0x18 resolution 24 continue]
+(waterway=ditch | barrier=ditch) & natural!=water [0x18 resolution 24 continue]
+waterway=weir [0x18 default_name="Слив" resolution 24]
+
+#Заборы, овраги и пр.
+natural=cliff | cutting=* | natural=earth_bank | natural=gully [0x10115  resolution 23]
+barrier=retaining_wall [0x1011a resolution 24] # стена, укрепляющая обрыв
+amenity=grave_yard | landuse=cemetery  | barrier=city_wall | barrier=wall | barrier=fence [0x10012 resolution 23 continue]
+barrier=hedge [0x10013 resolution 24 continue] # ограда из плотно посаженных кустов, деревьев.
+boundary=administrative & admin_level=2 { name '${mkgmap:boundary_name}' }[0x1c resolution 17 continue] #Граница
+boundary=administrative & admin_level=4 { name '${mkgmap:boundary_name}' }[0x1e resolution 19 continue]
+waterway=ditch | barrier=ditch [0x10119 resolution 23 continue]
+natural=tree_row [0x1D resolution 23 continue] #Деревья
+
+#Контуры
+#amenity=place_of_worship | building=church | historic=building | historic=castle | tourism=museum | tourism=gallery [0x22 resolution 22 continue]
+construction=building | (landuse=construction & building=* ) [0x1000B resolution 22 continue]
+#building=* & (building:levels>20 | height>60) [0x21 resolution 22 continue]
+leisure=nature_reserve | boundary = protected_area [0x10002 resolution 22 continue]
+aeroway=aerodrome [0x27 resolution 22 continue]
+military=airfield | military=barracks | military=danger_area | military=range | landuse=military   [0x10003 resolution 22 continue]
+man_made=embankment | embankment=yes [0x10004 resolution 22 continue]
+#building=shed | building=hut | building=garage | building=garages | building=service | building=stable | building:cladding=wood | building:material=wood [0x29 resolution 23 continue]
+
+bridge=* & bridge!=no & (highway=motorway | highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service | railway=rail | railway=tram)  & area!=yes [0x2b resolution 24 continue]
+bridge=* & (highway=bridleway | highway=track | highway=path | highway=footway) [0x19 resolution 23 continue]
+
+# include 'inc/contours';
+<finalize>
+# расчитать скорость дороги на основе тега maxspeed
+#include 'inc/roadspeed'; 
+# расчитать правила доступа
+include 'inc/access';
