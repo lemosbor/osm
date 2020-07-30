@@ -127,8 +127,9 @@ tourism=hotel & stars=2 {delete 'name'}  [0x2b12 resolution 24]  #звёзды
 tourism=hotel | tourism=motel  {delete 'name'}  [0x2803 resolution 20-22 continue] #гостиница Крупно
 tourism=hotel | tourism=motel  {delete 'name'}  [0x2903 resolution 23-24] #гостиница
 (tourism=guest_house | tourism=chalet | tourism=alpine_hut | tourism=apartment) & phone=* [0x2b02 resolution 24] # гостевой дом или аппартаменты
-tourism=camp_site {delete 'name'} [0x2800 resolution 20-23 continue] #кемпинг места(КРУПНЫЙ)
-tourism=camp_site {name 'кемпинг: ${name}' } [0x2B03 resolution 24] # кемпинг
+tourism=camp_site & name=* {delete 'name'} [0x2800 resolution 20-23 continue] #кемпинг места(КРУПНЫЙ)
+tourism=camp_site & name=* {name 'кемпинг: ${name}' } [0x2B03 resolution 24] # кемпинг
+tourism=camp_site | leisure=firepit [0x4005 resolution 23] # место под лагерь
 camp_site=reception [0x4003 resolution 24] # ресепшен в кемпинге
 resort=recreation_center | leisure=resort | resort=tourist_camp {name 'база отдыха: ${name}' } [0x2b04 resolution 24] # база отдыха / Туристическая база
 resort=sanatorium | resort=pension {name 'санаторий: ${name}' }  [0x2b06 resolution 24] # санаторий или пансионат
