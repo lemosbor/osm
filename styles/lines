@@ -146,7 +146,9 @@ piste:type=downhill & piste:difficulty=expert [0x10604 resolution 22 continue] #
 (piste:type=ice_skate | piste:type=nordic | piste:type=yes) [0x10605 resolution 22 continue]  #лыжня 
 
 #Фуникулёр
-(aerialway=cable_car | aerialway=gondola | aerialway=mixed_lift | highway=elevator)  {name '${name}' | '${note}' | '${description}' | '${aerialway}' | '${highway}' } [0x2d resolution 24]
+(aerialway=cable_car | aerialway=gondola | aerialway=mixed_lift | highway=elevator)  {name '${name}' | '${note}' | '${description}' | '${aerialway}' | '${highway}' } [0x2d resolution 23]
+aerialway=* {name '${name}' | '${note}' | '${description}' | '${aerialway}' | '${highway}' } [0x29 resolution 24]
+
 
 #Переправы
 route=ferry & vehicle!=no {name '${name|def:} ${opening_hours|def:}' | '${note}' } [0x10017  resolution 18-19 continue with_actions]
