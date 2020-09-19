@@ -310,9 +310,9 @@ barrier=* & barrier ~ '(gate|entrance|lift_gate|stile|block|cycle_barrier|kissin
 barrier=* & barrier ~ '(gate|entrance|turnstile|bump_gate|hampshire_gate|sally_port|stile|wicket_gate)' & (access=no | access=private | entrance=service) [0x2908 resolution 24] # ворота закрытые
 barrier=* & barrier ~ '(gate|entrance|turnstile|bump_gate|hampshire_gate|sally_port|stile|wicket_gate|lift_gate)' & entrance=main [0x2909 resolution 24] # центральные ворота
 barrier=* & barrier ~ '(gate|entrance|turnstile|bump_gate|hampshire_gate|sally_port|stile|wicket_gate)' [0x2905 resolution 24] # ворота
-barrier=* & barrier ~ '(lift_gate|swing_gate|log|chain)' [0x2906 resolution 24] # шлагбаум
+barrier=* & barrier ~ '(lift_gate|swing_gate|log|chain)' [0x281e resolution 24] # шлагбаум
 
-barrier=* & barrier ~ '(block|bollard|spikes|jersey_barrier)' {set mkgmap:car=no}  [0x2907 resolution 24] # блок ПОМЕНЯТЬ
+barrier=* & barrier ~ '(block|bollard|spikes|jersey_barrier)' {set mkgmap:car=no}  [0x281d resolution 24] # блок
 barrier=stile | barrier=turnstile  {add mkgmap:foot=yes; add access=no} # [ resolution 24] # турникет (вращающийся)
 #barrier=* & barrier ~ '(cycle_barrier|kissing_gate)' [0x3203 resolution 23]
 
@@ -321,7 +321,7 @@ barrier=stile | barrier=turnstile  {add mkgmap:foot=yes; add access=no} # [ reso
 #снижение скорости
 highway=traffic_signals { add mkgmap:road-speed = '-4' } #достаточно -3 # светофор
 crossing=traffic_signals { add mkgmap:road-speed = '-4' } # регулируемый переход
-highway=crossing { add mkgmap:road-speed = '-1' } # нерегулируемый переход crossing=uncontrolled | crossing=unmarked 
+highway=crossing { add mkgmap:road-speed = '-1' } [0x2815 resolution 24]  # нерегулируемый переход crossing=uncontrolled | crossing=unmarked 
 railway=level_crossing  { add mkgmap:road-speed = '-4' } [0x2805 resolution 22] # ЖД переезд
 highway=speed_camera { add mkgmap:road-speed = '-1' } # Камера
 highway=give_way { add mkgmap:road-speed = '-1' } # Уступить дорогу
@@ -331,8 +331,8 @@ highway=steps & (layer>-2 | layer!=*) & mkgmap:line2poitype=mid { add mkgmap:roa
 highway=steps & (layer>-2 | layer!=*) & mkgmap:line2poitype=end { add mkgmap:road-speed = '-7' } # ступени (если маршрутиризируемы)
 
 # roi на основе линий
-bicycle:conditional=* & mkgmap:line2poitype=start { name 'bicycle=${bicycle:conditional}' } [0x2815 resolution 23] # ограничение для вела
-access:conditional=* & bicycle!=* { name 'access=${access:conditional}' } [0x2815 resolution 23] # ограничение для вела
+bicycle:conditional=* & mkgmap:line2poitype=start { name 'bicycle=${bicycle:conditional}' } [0x2906 resolution 23] # ограничение для вела
+access:conditional=* & bicycle!=* { name 'access=${access:conditional}' } [0x2906 resolution 23] # ограничение для вела
 #scenic=yes & mkgmap:line2poitype=mid {delete 'name'} [0x2C04 resolution 23] # красивая дорога
 #(highway=cycleway | bicycle=yes | bicycle=permissive | bicycle=designated) & opening_hours=* & route!=ferry & mkgmap:line2poitype=mid { name 'open (${opening_hours})' } [0x2808 resolution 24]
 #highway=* & highway!=motorway & highway!=motorway_link & highway!=trunk & highway!=trunk_link & highway!=footway & bicycle!=no & (toll=yes | toll:bicycle=yes) & toll:bicycle!=no & service!=parking_aisle & mkgmap:line2poitype=mid {delete 'name'; delete 'ref';} [0x2811 resolution 24]
