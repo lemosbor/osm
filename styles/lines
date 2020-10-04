@@ -61,8 +61,8 @@ highway=construction  {add access = no; add mkgmap:dead-end-check = false} [0x07
 # Круговое движение
 junction=roundabout & highway=motorway [0x0c road_class=4 road_speed=6 resolution 21 continue with_actions] # скорость можно увеличить до 7, что означает, что нет лимита
 junction=roundabout & highway=trunk [0x0c road_class=4 road_speed=5 resolution 21 continue with_actions]
-junction=roundabout & highway=primary [0x0c road_class=3 road_speed=2 resolution 21 continue with_actions] 
-junction=roundabout & highway=secondary [0x0c road_class=2 road_speed=1 resolution 21 continue with_actions]
+junction=roundabout & highway=primary [0x0c road_class=3 road_speed=4 resolution 21 continue with_actions] 
+junction=roundabout & highway=secondary [0x0c road_class=2 road_speed=3 resolution 21 continue with_actions]
 junction=roundabout & highway=tertiary [0x0c road_class=1 road_speed=1 resolution 21 continue with_actions]
 junction=roundabout & highway=unclassified [0x0c road_class=1 road_speed=1 resolution 21 continue with_actions]
 junction=roundabout & (highway=residential | highway=service) [0x0c road_class=0 road_speed=1 resolution 22 continue with_actions]
@@ -102,7 +102,7 @@ highway=tertiary [0x05 road_class=2 road_speed=3  resolution 22]
 highway=unclassified [0x22 resolution 20-23 continue]
 highway=unclassified [0x08 road_class=1 road_speed=3  resolution 24]
 highway=residential [0x22 resolution 20-22 continue]
-highway=residential [0x07 road_class=1 road_speed=2  resolution 23]
+highway=residential [0x07 road_class=1 road_speed=1  resolution 23]
 highway=service [0x22 resolution 21-23 continue]
 highway=service [0x08 road_class=1 road_speed=1  resolution 24]
 

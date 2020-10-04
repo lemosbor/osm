@@ -319,9 +319,9 @@ barrier=stile | barrier=turnstile  {add mkgmap:foot=yes; add access=no} # [ reso
 
 
 #снижение скорости
-highway=traffic_signals { add mkgmap:road-speed = '-4' } #достаточно -3 # светофор
-crossing=traffic_signals { add mkgmap:road-speed = '-4' } # регулируемый переход
-highway=crossing { add mkgmap:road-speed = '-1' } [0x2815 resolution 24]  # нерегулируемый переход crossing=uncontrolled | crossing=unmarked 
+highway=traffic_signals { add mkgmap:road-speed = '-3' } #достаточно -3 # светофор
+crossing=traffic_signals { add mkgmap:road-speed = '-3' } # регулируемый переход
+highway=crossing { add mkgmap:road-speed = '-1' } #[0x2815 resolution 24]  # нерегулируемый переход crossing=uncontrolled | crossing=unmarked 
 railway=level_crossing  { add mkgmap:road-speed = '-4' } [0x2805 resolution 22] # ЖД переезд
 highway=speed_camera { add mkgmap:road-speed = '-1' } # Камера
 highway=give_way { add mkgmap:road-speed = '-1' } # Уступить дорогу
