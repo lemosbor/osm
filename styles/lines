@@ -143,8 +143,8 @@ railway=tram [0x2c resolution 22]
 #Лыжни
 piste:type=downhill & piste:difficulty=novice [0x10601 resolution 22 continue] #зелёная трасса 
 piste:type=downhill & piste:difficulty=easy [0x10602 resolution 22 continue] #синяя трасса 
-piste:type=downhill & piste:difficulty=intermediate [0x10603 resolution 22 continue] #красная трасса 
-piste:type=downhill & piste:difficulty=expert [0x10604 resolution 22 continue] #чёрная трасса 
+piste:type=downhill & (piste:difficulty=intermediate | piste:difficulty=advanced) [0x10603 resolution 22 continue] #красная трасса 
+piste:type=downhill & piste:difficulty=expert  [0x10604 resolution 22 continue] #чёрная трасса 
 (piste:type=ice_skate | piste:type=nordic | piste:type=yes) [0x10605 resolution 22 continue]  #лыжня 
 
 #Фуникулёр
