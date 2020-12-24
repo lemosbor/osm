@@ -1,4 +1,4 @@
-﻿#include 'inc/address';
+#include 'inc/address';
 name:nl=* & mkgmap:region=Friesland {set name='${name:nl|not-equal:name} / ${name}' | '${name}'}
 name:fy=* & mkgmap:region=Friesland {set name='${name|not-equal:name:fy} / ${name:fy}'| '${name}'}
 natural=bay {set toponym=water}
@@ -16,6 +16,7 @@ shop=* & location=underground {delete shop}
 
 
 place=city [0x02 resolution 10-18 continue] #город на большом масштабе
+place=town [0x02 resolution 15-18 continue] #город на большом масштабе
 ((place=village | place=hamlet) & residential!=*) & area_size() >=300000 [0x03 resolution 10-19 continue] #деревни на большом масштабе
 ((place=village | place=hamlet) & residential!=*) | residential=rural [0x03 resolution 20]
 (landuse=residential | landuse=commercial) & building=yes {delete landuse}
@@ -81,11 +82,22 @@ man_made=pier  [0x0e resolution 23 continue]
 (natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) & area_size() >=50000 [0x3c resolution 22 continue]
 (natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) [0x3c resolution 20-21 continue]
 (natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) [0x3c resolution 22 continue]
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) & intermittent=yes [0x2f resolution 22 continue] # разливы рек
+
 (leisure=swimming_pool |  sport=swimming) & building!=* [0x3c resolution 22 continue]
 (waterway=canal | waterway=river)   & natural!=water   [0x3c resolution 22 continue] 
 (waterway=drain | waterway=stream)  & natural!=water   [0x3c resolution 24]
 waterway=wadi [0x40 resolution 21]
 
+#лыжи
+piste:type=downhill & piste:difficulty=novice [0x31 resolution 22 continue] #зелёная трасса
+piste:type=downhill & piste:difficulty=easy [0x32 resolution 22 continue] #синяя трасса 
+piste:type=downhill & (piste:difficulty=intermediate | piste:difficulty=advanced) [0x33 resolution 22 continue] #красная трасса 
+piste:type=downhill & piste:difficulty=expert  [0x34 resolution 22 continue] #чёрная трасса
+piste:type=downhill & (piste:difficulty=freeride | piste:difficulty=extreme) [0x35 resolution 22 continue] #фрирайд трасса 
+
+
+wetland=tidalflat | tidal=yes | natural=shoal [0x2c resolution 21]  #отмель
 wetland=* & (natural!=* | landuse!=*) [0x3f resolution 21] #болота
 natural=wetland |  wetland=* [0x3e resolution 22]
 #wetland=tidalflat [0x52 resolution 22]

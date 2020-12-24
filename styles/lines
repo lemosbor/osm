@@ -86,16 +86,22 @@ junction=roundabout & (highway=residential | highway=service) [0x0c road_class=0
 
 (ncn_from_relation=yes | lcn_from_relation=yes | ncn_ref=* | lcn_ref=*) & state!=ncn_proposed | route=bicycle {name '${nref|highway-symbol:oval} (${nname|not-equal:nref})'| '${nref|highway-symbol:oval}'} [0x10 resolution 20-22 continue with_actions] #значки дорог
 
-highway=motorway {name '${ref|highway-symbol:box}'} [0x10000 resolution 17-19 continue]
-highway=motorway {name '${ref|highway-symbol:box}'} [0x10016 resolution 20-21 continue]
-highway=motorway [0x01 road_class=4 road_speed=7 resolution 22]
-highway=trunk {name '${ref|highway-symbol:box}'} [0x10000 resolution 17-19 continue]
-highway=trunk {name '${ref|highway-symbol:box}'} [0x10016 resolution 20-21 continue]
-highway=trunk [0x02 road_class=4 road_speed=6  resolution 22]
-highway=primary {name '${ref|highway-symbol:box}'} [0x10000 resolution 18-19 continue]
-highway=primary {name '${ref|highway-symbol:box}'} [0x10014 resolution 20-21 continue]
-highway=primary & (oneway=yes | oneway=1 | oneway=true | oneway=-1) [0x06 road_class=3 road_speed=5  resolution 22]
-highway=primary [0x06 road_class=3 road_speed=4  resolution 22]
+highway=motorway {name '${ref|highway-symbol:box}'} [0x10000 resolution 17-19 continue] # крупные дороги на большом масштабе
+highway=motorway {name '${ref|highway-symbol:box}'} [0x10016 resolution 20-21 continue] # крупные дороги на среднем масштабе
+highway=motorway & toll=yes [0x01 road_class=4 road_speed=7 resolution 22] # платные скоростные: скорость до 130+
+highway=motorway [0x01 road_class=4 road_speed=6 resolution 22] # бесплатные скоростные: скорость до 110
+
+highway=trunk {name '${ref|highway-symbol:box}'} [0x10000 resolution 17-19 continue] # крупные дороги на большом масштабе
+highway=trunk {name '${ref|highway-symbol:box}'} [0x10016 resolution 20-21 continue] # крупные дороги на среднем масштабе
+highway=trunk & toll=yes [0x02 road_class=4 road_speed=7 resolution 22] # платные скоростные: скорость до 130+
+highway=trunk & (oneway=yes | oneway=1 | oneway=true | oneway=-1) [0x02 road_class=4 road_speed=6  resolution 22] # бесплатные скоростные многополосные: скорость до 110
+highway=trunk [0x02 road_class=4 road_speed=5  resolution 22] # бесплатные скоростные однополосные: скорость до 90
+
+highway=primary {name '${ref|highway-symbol:box}'} [0x10000 resolution 18-19 continue] # основные дороги на большом масштабе
+highway=primary {name '${ref|highway-symbol:box}'} [0x10014 resolution 20-21 continue] # основные дороги на большом масштабе
+highway=primary & (oneway=yes | oneway=1 | oneway=true | oneway=-1) [0x06 road_class=3 road_speed=5  resolution 22] # основные многополосные: скорость до 90
+highway=primary [0x06 road_class=3 road_speed=4  resolution 22] # основные однополосные: скорость до 80
+
 highway=secondary [0x10000 resolution 18-19 continue]
 highway=secondary [0x10014 resolution 20-21 continue]
 highway=secondary [0x04 road_class=2 road_speed=4  resolution 22]
@@ -144,7 +150,8 @@ railway=tram [0x2c resolution 22]
 piste:type=downhill & piste:difficulty=novice [0x10601 resolution 22 continue] #зелёная трасса 
 piste:type=downhill & piste:difficulty=easy [0x10602 resolution 22 continue] #синяя трасса 
 piste:type=downhill & (piste:difficulty=intermediate | piste:difficulty=advanced) [0x10603 resolution 22 continue] #красная трасса 
-piste:type=downhill & piste:difficulty=expert  [0x10604 resolution 22 continue] #чёрная трасса 
+piste:type=downhill & piste:difficulty=expert [0x10604 resolution 22 continue] #чёрная трасса 
+piste:type=downhill & (piste:difficulty=freeride | piste:difficulty=extreme) [0x10606 resolution 22 continue] #фрирайд трасса 
 (piste:type=ice_skate | piste:type=nordic | piste:type=yes) [0x10605 resolution 22 continue]  #лыжня 
 
 #Фуникулёр
@@ -157,13 +164,17 @@ route=ferry & vehicle!=no {name '${name|def:} ${opening_hours|def:}' | '${note}'
 route=ferry & vehicle!=no  {add mkgmap:ferry=1} [0x0a road_class=3 road_speed=1 resolution 20 continue]
 
 #Реки и пр.
+waterway=river & natural!=water & (layer>-1 | layer!=*) & intermittent=yes [0x25 resolution 18-19]
+waterway=river & natural!=water & (layer>-1 | layer!=*) & intermittent=yes {name '${name}' } [0x21 resolution 20]
 waterway=river & natural!=water & (layer>-1 | layer!=*) [0x18 resolution 18-19 continue]
 waterway=river & natural!=water & (layer>-1 | layer!=*) {name '${name}' } [0x1f resolution 20 continue]
+
 waterway=canal & natural!=water & (layer>-1 | layer!=*) [0x18 resolution 22-21 continue]
 waterway=canal & natural!=water & (layer>-1 | layer!=*) [0x1f resolution 23 continue]
-waterway=stream & natural!=water & (layer>-1 | layer!=*) & name=* [0x18 resolution 22-22 continue]
-waterway=stream & natural!=water & (layer>-1 | layer!=*) & name=* [0x1f resolution 23 continue]
-waterway=stream & natural!=water & (layer>-1 | layer!=*) & name!=* [0x18 resolution 24 continue]
+
+waterway=stream & natural!=water & (layer>-1 | layer!=*) & intermittent=yes  [0x25 resolution 22 continue]
+waterway=stream & natural!=water & (layer>-1 | layer!=*) [0x18 resolution 22 continue]
+
 waterway=drain & natural!=water & (layer>-1 | layer!=*) [0x18 resolution 24 continue]
 (waterway=ditch | barrier=ditch) & natural!=water [0x18 resolution 24 continue]
 waterway=weir [0x18 default_name="Слив" resolution 24]

@@ -84,6 +84,7 @@ railway=tram_stop | highway=bus_stop { name  '${name}' } [0x2F0B resolution 24] 
 
 #ЕДА (красный)
 amenity=restaurant & (addr:city='Москва' | mkgmap:city='Москва') [0x280c resolution 21-24 continue] #рестораны крупно (в городах)
+(amenity=cafe | amenity=fast_food | amenity=restaurant | amenity=food_court) & city!=* [0x281c resolution 24 continue] # питание крупно при движении
 #amenity=restaurant & mkgmap:city!=* [0x280c resolution 21-24 continue] #рестораны крупно (вне городов)
 cuisine = sea_food | cuisine = fish | cuisine = seafood | cuisine = fish_and_chips [0x2a0b resolution 24] # рыбная кухня
 cuisine = barbecue | cuisine = escalope | cuisine = kebab | cuisine = kebab | cuisine = steak_house [0x2A03 resolution 24] # мясные рестораны
@@ -316,8 +317,6 @@ barrier=* & barrier ~ '(block|bollard|spikes|jersey_barrier)' {set mkgmap:car=no
 barrier=stile | barrier=turnstile  {add mkgmap:foot=yes; add access=no} # [ resolution 24] # турникет (вращающийся)
 #barrier=* & barrier ~ '(cycle_barrier|kissing_gate)' [0x3203 resolution 23]
 
-
-
 #снижение скорости
 highway=traffic_signals { add mkgmap:road-speed = '-3' } #достаточно -3 # светофор
 crossing=traffic_signals { add mkgmap:road-speed = '-3' } # регулируемый переход
@@ -339,7 +338,7 @@ access:conditional=* & bicycle!=* { name 'access=${access:conditional}' } [0x290
 #highway=cycleway & bicycle=no & moped!=* & mkgmap:line2poitype=inner { name '${note|def:}' } [0x5600 resolution 24]
 #highway=cycleway & bicycle!=* & access=no & mkgmap:line2poitype=inner { name '${note|def:}' } [0x5600 resolution 24]
 #(highway=motorway | highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (tunnel=yes | tunnel=true | tunnel=1) & mkgmap:line2poitype=start [0x3203 resolution 24]
-highway!=path & highway!=footway & highway!=track & smoothness=* & smoothness ~ '.*(bad|horrible|impassable)' & mkgmap:line2poitype=mid {delete 'name'} [0x281C   resolution 24] # кочки
+highway!=path & highway!=footway & highway!=track & smoothness=* & smoothness ~ '.*(bad|horrible|impassable)' & mkgmap:line2poitype=mid {delete 'name'} [0x2901 resolution 24] # кочки
 
 # Названия водоёмов
 (natural=sea | natural=water | natural=bay | natural=fjord | natural=strait)  & name=* [0x1000 resolution 20-22 continue] #НАЗВАНИЕ водоёма
