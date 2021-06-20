@@ -30,7 +30,7 @@ link-pois-to-ways
 polygon-size-limits=22:4, 17:2, 15:0
 preserve-element-order #ïîðÿäîê ïðîðèñîâêè äàííûõ
 name-tag-list = name:ru,name,name:en,int_name
-check-roundabouts # ïðîâåðèòü êîëüöà
+#check-roundabouts # ïðîâåðèòü êîëüöà
 process-destination
 keep-going
 route
