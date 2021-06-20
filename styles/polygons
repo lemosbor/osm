@@ -36,9 +36,9 @@ amenity=marketplace | landuse=retail [0x04 resolution 20]
 
 amenity=parking & access=private [0x0f resolution 23] # приватная парковка
 amenity=parking & fee=yes [0x11 resolution 23] # парковка платная
-amenity=parking & (building!=* | fee=no) [0x05 resolution 23] # парковка
+amenity=parking & (building!=* | fee=no) [0x05 resolution 22] # парковка
 
-place=allotments [0x06 resolution 23]
+place=allotments [0x06 resolution 22]
 (amenity=college | amenity=school | amenity=university | amenity=kindergarten) & building!=* [0x0a resolution 23]
 landuse=industrial | landuse=garages [0x0c resolution 20] #Заводы
 landuse=construction | landuse=greenfield | landuse=brownfield [0x0d resolution 23 continue]
@@ -65,7 +65,7 @@ natural=fell [0x1f resolution 20]
 building=ruins | building=collapsed | ( building=* & (ruins=yes | historic=ruins))[0x22 resolution 23]
 landuse=railway [0x23 resolution 23]
 landuse=quarry | man_made=surface_mine [0x2d resolution 23]
-leisure=resort | leisure=summer_camp | tourism=camp_site | tourism=caravan_site [0x2e resolution 23] # не обязательно кемпинг
+leisure=resort | leisure=summer_camp | tourism=camp_site | tourism=caravan_site [0x2e resolution 22] # не обязательно кемпинг
 
 # squares, plazas, bridges
 waterway=dam  [0x0e resolution 22]
@@ -125,7 +125,7 @@ building= greenhouse [0x08 resolution 23]
 
 landuse=landfill [0x52 resolution 23]
 
-landuse=farm | landuse=farmland [0x07 resolution 22]
+landuse=farm | landuse=farmland [0x07 resolution 21]
 
 # building tags
 #include 'inc/bag';

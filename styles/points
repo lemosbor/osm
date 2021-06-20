@@ -78,7 +78,7 @@ amenity=bus_station [0x2818 resolution 21-24] # вокзалы и станции
 (railway=station | railway=halt) & station!=subway   [0x280e resolution 21-24] # вокзалы и станции
 railway=station & (station=subway | subway=yes) {delete 'name'}  [0x2808 resolution 21-24] # метро
 railway=subway_entrance {name '${ref}' } [0x2902 resolution 24] # вход в метро
-(aeroway=aerodrome | aeroway=airport) | (aeroway=terminal & mkgmap:area2poi!=true) { name  '${name}' } [0x280a resolution 19-24 continue] # Аэропорт
+(aeroway=aerodrome | aeroway=airport) | (aeroway=terminal & mkgmap:area2poi!=true) { name  '${iata}' } [0x280a resolution 18-24 continue] # Аэропорт
 (aeroway=aerodrome | aeroway=airport) | (aeroway=terminal & mkgmap:area2poi!=true) { name  '${name}' } [0x2f04 resolution 24]
 railway=tram_stop | highway=bus_stop { name  '${name}' } [0x2F0B resolution 24] #автобусная остановка
 
@@ -137,8 +137,8 @@ resort=sanatorium | resort=pension {name 'санаторий: ${name}' }  [0x2b0
 tourism=caravan_site [0x2B05 resolution 24] # Иконку
 
 
-amenity=fuel & fuel:diesel=no {delete 'name'} [0x2811 resolution 22 continue] #заправки (КРУПНЫЙ)
-amenity=fuel {delete 'name'} [0x2804 resolution 22 continue] #заправки (КРУПНЫЙ)
+amenity=fuel & fuel:diesel=no {delete 'name'} [0x2811 resolution 22 continue] #заправки без дизеля (КРУПНЫЙ)
+amenity=fuel { name '${brand}' | '${operator} ' | '${name} ' } [0x2804 resolution 22 continue] #заправки (КРУПНЫЙ)
 
 
 #amenity=charging_station { name '${name} (${voltage}v)' | '${name}' | '${voltage}v' } [0x2f16 resolution 19] # Электрозаправки
@@ -157,7 +157,7 @@ barrier=toll_booth [0x280D resolution 24] #Толлы (АВТО)
 amenity=parking_entrance [0x2809 resolution 24] #Въезды на парковки (АВТО)
 highway=rest_area [0x2810 resolution 22-24 continue] #зона отдыха
 
-highway=motorway_junction  {name '${ref}' | '${name}' } [0x2813 resolution 23]  #развязки (АВТО)
+highway=motorway_junction  {name '${ref}:${name}' | '${ref}' |'${name}' } [0x2813 resolution 23]  #развязки (АВТО)
 leisure=outdoor_seating [0x4002 resolution 24] #веранда ресторана 
 tourism=picnic_site | amenity=bbq | leisure=picnic_table  [0x2904 resolution 24] # место для пикника
 service=tyres [0x2F0A resolution 24] # шиномонтаж
@@ -202,6 +202,7 @@ shop=stationery [0x2E0D resolution 24] # канцелярские
 #shop=chemist | shop=cosmetics [0x2e14 resolution 24] # химия и косметика
 
 #ПОДДЕРЖКА (сереневый)
+shop=ticket [0x300a resolution 24] # билеты
 (amenity=doctors | amenity=clinic | amenity=hospital) & emergency=* {name 'Травмпункт ${name}' | 'Травмпункт' } [0x3002 resolution 24 continue] # травмпункт
 amenity=hospital [0x3002 resolution 23 continue] # больница
 amenity=bureau_de_change {name '${name} (обменник)' |  'Обменник' } [0x2f1e resolution 24] # Обменники
@@ -237,7 +238,7 @@ amenity=prison [0x3009 resolution 24] # Тюрьмы
 tourism=viewpoint [0x2802 resolution 21-24 continue] #красивые места(КРУПНЫЙ)
 tourism=viewpoint { name  '${name}' } [0x2C04 resolution 24] 
 tourism=attraction [0x2801 resolution 22-23 continue] #Примечательность
-tourism=attraction { name  '${name}' } [0x2c00 resolution 24 continue] # Примечательность
+tourism=attraction { name  '${name}' } [0x2c00 resolution 23-24 continue] # Примечательность
 (leisure=garden | leisure=park) & name=* [0x2C06 resolution 24 continue] # сад
 amenity=library [0x2C03 resolution 24] # Библиотека
 amenity=cinema [0x2d03 resolution 24] # Кино

@@ -8,6 +8,15 @@ highway=* & name=* { set mkgmap:street='${name}' }
 # соркащение названий улиц
 highway=* { name '${name|subst:"переулок=>пер."|subst:"улица=>ул."|subst:"мост=>м."|subst:"gate=>ул."|subst:"проспект=>пр-т"|subst:"проезд=>пр-д"|subst:"разъезд=>раз."|subst:"тракт=>тр-т"|subst:"площадь=>пл."|subst:"имени=>им."|subst:"бульвар=>бл-р"|subst:"шоссе=>ш."|subst:"дорога=>дор."|subst:"тупик=>туп."|subst:"микрорайон=>мкр"|subst:"аллея=>алл."|subst:"линия=>лин."|subst:"(дублер)=>(дб.)"|subst:"набережная=>наб."|subst:"Rue=>ул."|subst:"Allée=>алл."|subst:"Place=>пл."|subst:"Passage=>пер."|subst:"Pont=>м."|subst:"Quai=>наб."|subst:"Avenue=>пр-т"|subst:"Boulevard=>бл-р"|subst:"Impasse=>пер."|subst:"Cours=>бл-р"|subst:"Chemin=>пр-д"|subst:"Route=>дор."|subst:"La Grande=>Б."|subst:"Большая=>Б."|subst:"Grand=>Б."|subst:"Большая=>Б."|subst:"Большой=>Б."|subst:"Малая=>М."|subst:"Малый=>М."|subst:"de Gaulle=>Де Голля"|subst:"général=>ген."|subst:"Gеnеral=>ген."|subst:"de la République=>Республики"|subst:"Jean Jaurès=>Жан Жореса"|subst:"Charles=>Шарля"}' }
 
+# Круговое движение
+junction=roundabout & (highway=motorway | highway=motorway_link) [0x0c road_class=4 road_speed=2 resolution 21  ] # скорость можно увеличить до 7, что означает, что нет лимита
+junction=roundabout & (highway=trunk | highway=trunk_link) [0x0c road_class=4 road_speed=2 resolution 21  ]
+junction=roundabout & (highway=primary | highway=primary_link) [0x0c road_class=3 road_speed=2 resolution 21  ] 
+junction=roundabout & (highway=secondary | highway=secondary_link) [0x0c road_class=2 road_speed=2 resolution 21  ]
+junction=roundabout & (highway=tertiary | highway=tertiary_link) [0x0c road_class=1 road_speed=1 resolution 21  ]
+junction=roundabout & (highway=unclassified | highway=minor) [0x0c road_class=1 road_speed=1 resolution 21  ]
+junction=roundabout & highway=*  [0x0c road_class=0 road_speed=1 resolution 22  ]
+
 #объеденить типы дорог
 highway=motorway_link { set highway=motorway }
 highway=trunk_link { set highway=trunk }
@@ -58,15 +67,6 @@ highway=steps { add mkgmap:road-speed = '-5' }
 
 # стоительство дорог
 highway=construction  {add access = no; add mkgmap:dead-end-check = false} [0x070 road_class=0 road_speed=1 resolution 23]
-
-# Круговое движение
-junction=roundabout & highway=motorway [0x0c road_class=4 road_speed=6 resolution 21 continue with_actions] # скорость можно увеличить до 7, что означает, что нет лимита
-junction=roundabout & highway=trunk [0x0c road_class=4 road_speed=5 resolution 21 continue with_actions]
-junction=roundabout & highway=primary [0x0c road_class=3 road_speed=4 resolution 21 continue with_actions] 
-junction=roundabout & highway=secondary [0x0c road_class=2 road_speed=3 resolution 21 continue with_actions]
-junction=roundabout & highway=tertiary [0x0c road_class=1 road_speed=1 resolution 21 continue with_actions]
-junction=roundabout & highway=unclassified [0x0c road_class=1 road_speed=1 resolution 21 continue with_actions]
-junction=roundabout & (highway=residential | highway=service) [0x0c road_class=0 road_speed=1 resolution 22 continue with_actions]
 
 # Показать стрелки для односторонок
 (highway=tertiary | highway=unclassified | highway=residential | highway=service) & (oneway=yes | oneway=1 | oneway=true | oneway=-1) [0x10005 resolution 24 continue with_actions]
