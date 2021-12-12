@@ -6,16 +6,16 @@ highway=* & name=* { set mkgmap:street='${name}' }
 #include 'inc/address';
 
 # соркащение названий улиц
-highway=* { name '${name|subst:"переулок=>пер."|subst:"улица=>ул."|subst:"мост=>м."|subst:"gate=>ул."|subst:"проспект=>пр-т"|subst:"проезд=>пр-д"|subst:"разъезд=>раз."|subst:"тракт=>тр-т"|subst:"площадь=>пл."|subst:"имени=>им."|subst:"бульвар=>бл-р"|subst:"шоссе=>ш."|subst:"дорога=>дор."|subst:"тупик=>туп."|subst:"микрорайон=>мкр"|subst:"аллея=>алл."|subst:"линия=>лин."|subst:"(дублер)=>(дб.)"|subst:"набережная=>наб."|subst:"Rue=>ул."|subst:"Allée=>алл."|subst:"Place=>пл."|subst:"Passage=>пер."|subst:"Pont=>м."|subst:"Quai=>наб."|subst:"Avenue=>пр-т"|subst:"Boulevard=>бл-р"|subst:"Impasse=>пер."|subst:"Cours=>бл-р"|subst:"Chemin=>пр-д"|subst:"Route=>дор."|subst:"La Grande=>Б."|subst:"Большая=>Б."|subst:"Grand=>Б."|subst:"Большая=>Б."|subst:"Большой=>Б."|subst:"Малая=>М."|subst:"Малый=>М."|subst:"de Gaulle=>Де Голля"|subst:"général=>ген."|subst:"Gеnеral=>ген."|subst:"de la République=>Республики"|subst:"Jean Jaurès=>Жан Жореса"|subst:"Charles=>Шарля"}' }
+highway=* { name '${name|subst:"переулок=>пер."|subst:"километр=>км"|subst:"проектируемый=>про."|subst:"улица=>ул."|subst:"дублер=>дуб"|subst:"дублёр=>дуб"|subst:"мост=>м."|subst:"gate=>ул."|subst:"проспект=>пр-т"|subst:"проезд=>пр-д"|subst:"разъезд=>раз."|subst:"разворот=>раз."|subst:"тракт=>тр-т"|subst:"площадь=>пл."|subst:"имени=>им."|subst:"бульвар=>бл-р"|subst:"шоссе=>ш."|subst:"дорога=>дор."|subst:"тупик=>туп."|subst:"микрорайон=>мкр"|subst:"аллея=>алл."|subst:"линия=>лин."|subst:"(дублер)=>(дб.)"|subst:"набережная=>наб."|subst:"Rue=>ул."|subst:"Allée=>алл."|subst:"Place=>пл."|subst:"Passage=>пер."|subst:"Pont=>м."|subst:"Quai=>наб."|subst:"Avenue=>пр-т"|subst:"Boulevard=>бл-р"|subst:"Impasse=>пер."|subst:"Cours=>бл-р"|subst:"Chemin=>пр-д"|subst:"Route=>дор."|subst:"La Grande=>Б."|subst:"Большая=>Б."|subst:"Grand=>Б."|subst:"Большая=>Б."|subst:"Большой=>Б."|subst:"Малая=>М."|subst:"Малый=>М."|subst:"de Gaulle=>Де Голля"|subst:"général=>ген."|subst:"Gеnеral=>ген."|subst:"de la République=>Республики"|subst:"Jean Jaurès=>Жан Жореса"|subst:"Charles=>Шарля"}' }
 
 # Круговое движение
-junction=roundabout & (highway=motorway | highway=motorway_link) [0x0c road_class=4 road_speed=2 resolution 21  ] # скорость можно увеличить до 7, что означает, что нет лимита
-junction=roundabout & (highway=trunk | highway=trunk_link) [0x0c road_class=4 road_speed=2 resolution 21  ]
-junction=roundabout & (highway=primary | highway=primary_link) [0x0c road_class=3 road_speed=2 resolution 21  ] 
-junction=roundabout & (highway=secondary | highway=secondary_link) [0x0c road_class=2 road_speed=2 resolution 21  ]
-junction=roundabout & (highway=tertiary | highway=tertiary_link) [0x0c road_class=1 road_speed=1 resolution 21  ]
-junction=roundabout & (highway=unclassified | highway=minor) [0x0c road_class=1 road_speed=1 resolution 21  ]
-junction=roundabout & highway=*  [0x0c road_class=0 road_speed=1 resolution 22  ]
+junction=roundabout & (highway=motorway | highway=motorway_link) [0x01 road_class=4 road_speed=2 resolution 22  ] # скорость можно увеличить до 7, что означает, что нет лимита
+junction=roundabout & (highway=trunk | highway=trunk_link) [0x02 road_class=4 road_speed=2 resolution 22  ]
+junction=roundabout & (highway=primary | highway=primary_link) [0x06 road_class=3 road_speed=2 resolution 22  ] 
+junction=roundabout & (highway=secondary | highway=secondary_link) [0x04 road_class=2 road_speed=2 resolution 22  ]
+junction=roundabout & (highway=tertiary | highway=tertiary_link) [0x05 road_class=1 road_speed=1 resolution 22  ]
+junction=roundabout & (highway=unclassified | highway=minor | highway=service) [0x08 road_class=1 road_speed=1 resolution 23  ]
+junction=roundabout & highway=*  [0x08 road_class=0 road_speed=1 resolution 22  ]
 
 #объеденить типы дорог
 highway=motorway_link { set highway=motorway }
@@ -76,9 +76,13 @@ highway=construction  {add access = no; add mkgmap:dead-end-check = false} [0x07
 (highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (parking:lane:left=parallel | parking:lane:left=diagonal | parking:lane:left=perpendicular | parking:lane:left=marked) [0x10011 resolution 24 continue with_actions]
 (highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (parking:lane:both=parallel | parking:lane:both=diagonal | parking:lane:both=perpendicular | parking:lane:both=marked) [0x1001A resolution 24 continue with_actions]
 
-# Мосты и тунели
-(tunnel=yes | tunnel=true | tunnel=1) & (highway=motorway | highway=trunk | highway=primary | highway=secondary) [0x2A road_class=3 road_speed=2 resolution 20] # прорисовка по длине в метрах highway=service & length()>50
-(tunnel=yes | tunnel=true | tunnel=1) & (highway=tertiary | highway=unclassified | highway=residential | highway=service) [0x2A road_class=1 road_speed=1 resolution 23]
+# Мосты и тунели # прорисовка по длине в метрах highway=service & length()>50
+(tunnel=yes | tunnel=true | tunnel=1) & highway=motorway [0x2A road_class=4 road_speed=6 resolution 20] # бесплатные скоростные: скорость до 110
+(tunnel=yes | tunnel=true | tunnel=1) & highway=trunk [0x2A road_class=4 road_speed=5  resolution 20] # бесплатные скоростные однополосные: скорость до 90
+(tunnel=yes | tunnel=true | tunnel=1) & highway=primary [0x2A road_class=3 road_speed=4  resolution 20] # основные однополосные: скорость до 80
+(tunnel=yes | tunnel=true | tunnel=1) & highway=secondary [0x2A road_class=2 road_speed=4  resolution 21]
+(tunnel=yes | tunnel=true | tunnel=1) & highway=tertiary [0x2A road_class=2 road_speed=3  resolution 22]
+(tunnel=yes | tunnel=true | tunnel=1) & (highway=unclassified | highway=residential | highway=service) [0x2A road_class=1 road_speed=2 resolution 23]
 
 #Зимник
 (highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service | highway=track) & winter_road=yes [0x0f road_class=1 road_speed=1 resolution 22 continue]
@@ -143,7 +147,7 @@ railway=rail & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x1
 (railway=abandoned | railway=rail) & highway!=* & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x10114 resolution 23]
 
 railway=subway & (layer>0 | layer!=*)  [0x24 resolution 22]
-railway=tram [0x2c resolution 22]
+railway=tram [0x2e resolution 22]
 (railway=funicular | railway=narrow_gauge | railway=monorail) {name '${name}' | '${note}' | '${description}' | '${railway}' | '${aerialway}' } [0x23 resolution 23]
 
 #Лыжни
@@ -181,7 +185,7 @@ waterway=weir [0x18 default_name="Слив" resolution 24]
 
 #Заборы, овраги и пр.
 natural=cliff | cutting=* | natural=earth_bank | natural=gully [0x10115  resolution 23]
-natural=ridge [0x1011B  resolution 22] #хребет или перевал
+natural=ridge [0x1011B  resolution 21] #хребет или перевал
 barrier=retaining_wall [0x1011a resolution 24] # стена, укрепляющая обрыв
 amenity=grave_yard | landuse=cemetery  | barrier=city_wall | barrier=wall | barrier=fence [0x10012 resolution 23 continue]
 barrier=hedge [0x10013 resolution 24 continue] # ограда из плотно посаженных кустов, деревьев.
@@ -202,6 +206,7 @@ man_made=embankment | embankment=yes [0x10004 resolution 22 continue]
 
 bridge=* & bridge!=no & (highway=motorway | highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service | railway=rail | railway=tram)  & area!=yes [0x2b resolution 24 continue]
 bridge=* & (highway=bridleway | highway=track | highway=path | highway=footway) [0x19 resolution 23 continue]
+bridge=* & ( highway=track | highway=path ) [0x19 resolution 23 continue]
 
 # include 'inc/contours';
 <finalize>

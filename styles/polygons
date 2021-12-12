@@ -1,6 +1,10 @@
 #include 'inc/address';
 name:nl=* & mkgmap:region=Friesland {set name='${name:nl|not-equal:name} / ${name}' | '${name}'}
 name:fy=* & mkgmap:region=Friesland {set name='${name|not-equal:name:fy} / ${name:fy}'| '${name}'}
+
+name=* {set name='${name|subst:"лесопарк=>л—п"|subst:"микрорайон=>мкр"|subst:"завод=>з."|subst:"Завод=>з."|subst:"Площадь=>пл."|subst:"площадь=>пл."|subst:"парк=>п."|subst:"Парк=>п."|subst:"озеро=>оз."|subst:"пруд=>пр."}' }
+
+
 natural=bay {set toponym=water}
 toponym=water & area_size() > 200000000 [0x3b resolution 16]
 toponym=water & area_size() > 50000000 [0x3b resolution 20]
@@ -31,8 +35,8 @@ aeroway=runway [0x0C resolution 22]
 aeroway=airport [0x09 resolution 18 continue] #Аэропорт
 aeroway=aerodrome [0x09 resolution 20 continue ]
 
-(amenity=marketplace | landuse=retail) & area_size() >=20000 [0x04 resolution 18-24 continue]
-amenity=marketplace | landuse=retail [0x04 resolution 20]
+(amenity=marketplace | landuse=retail) & area_size() >=20000 & building!=* [0x04 resolution 18-24 continue]
+(amenity=marketplace | landuse=retail) & building!=* [0x04 resolution 20]
 
 amenity=parking & access=private [0x0f resolution 23] # приватная парковка
 amenity=parking & fee=yes [0x11 resolution 23] # парковка платная
@@ -87,7 +91,7 @@ man_made=pier  [0x0e resolution 23 continue]
 (leisure=swimming_pool |  sport=swimming) & building!=* [0x3c resolution 22 continue]
 (waterway=canal | waterway=river)   & natural!=water   [0x3c resolution 22 continue] 
 (waterway=drain | waterway=stream)  & natural!=water   [0x3c resolution 24]
-waterway=wadi [0x40 resolution 21]
+waterway=wadi [0x40 resolution 21] # пустое русло
 
 #лыжи
 piste:type=downhill & piste:difficulty=novice [0x31 resolution 22 continue] #зелёная трасса
@@ -110,11 +114,12 @@ landuse=allotments [0x4e resolution 22]
 natural=scrub [0x4f resolution 21]
 landuse=plant_nursery [0x50 resolution 22]
 
-((natural=beach | leisure=beach_resort) & (surface=fine_gravel | surface=gravel | surface=pebblestone)) | natural=scree | natural=shingle [0x2b resolution 22]
+
+((natural=beach | leisure=beach_resort) & (surface=fine_gravel | surface=gravel | surface=pebblestone)) | natural=shingle [0x2b resolution 22] # галька
 leisure=playground | natural=beach | leisure=beach_resort | natural=sand [0x53 resolution 22]
 
 #natural=land [0x27 resolution 20]
-
+natural=scree [0x29 resolution 22] # курумник
 natural=bedrock | natural=cliff | natural=rock | natural=bare_rock [0x27 resolution 23]
 
 landuse=orchard | leisure=garden [0x18 resolution 22]
@@ -130,6 +135,7 @@ landuse=farm | landuse=farmland [0x07 resolution 21]
 # building tags
 #include 'inc/bag';
 
+amenity=hospital & building!=* [0x0b resolution 20]
 
 building=no {delete building}
 (building=sty | building=pavilion | building=cabin | building=kiosk | building=bungalow | building=shed | building=hut | building=garage | building=garages | building=service | building=stable | building:cladding=wood | building:material=wood) & area_size() >=20000 [0x21 resolution 23]
@@ -137,9 +143,6 @@ building=sty | building=pavilion | building=cabin | building=kiosk | building=bu
 building=* & area_size() >=20000 [0x13 resolution 22] # большие дома
 building=* & area_size() >=10000 [0x13 resolution 23] # большие дома
 building=* {delete name} [0x13 resolution 24] # дома
-
-
-amenity=hospital [0x0b resolution 20]
 
 natural=background [0x010100 resolution 12]
 
