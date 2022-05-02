@@ -244,8 +244,8 @@ amenity=prison [0x3009 resolution 24] # Тюрьмы
 #ОТДЫХ (Коричневый)
 tourism=viewpoint [0x2802 resolution 21-24 continue] #красивые места(КРУПНЫЙ)
 tourism=viewpoint { name  '${name}' } [0x2C04 resolution 24] 
-tourism=attraction [0x2801 resolution 22-23 continue] #Примечательность
-tourism=attraction { name  '${name}' } [0x2c00 resolution 23-24 continue] # Примечательность
+tourism=attraction [0x2801 resolution 21-24 continue] #Примечательность
+tourism=attraction { name  '${name}' } [0x2c00 resolution 24 continue] # Примечательность
 (leisure=garden | leisure=park) & name=* [0x2C06 resolution 24 continue] # сад
 amenity=library [0x2C03 resolution 24] # Библиотека
 amenity=cinema [0x2d03 resolution 24] # Кино
