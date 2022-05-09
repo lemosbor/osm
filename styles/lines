@@ -184,7 +184,8 @@ waterway=drain & natural!=water & (layer>-1 | layer!=*) [0x18 resolution 24 cont
 waterway=weir [0x18 default_name="Слив" resolution 24]
 
 #Заборы, овраги и пр.
-natural=cliff | cutting=* | natural=earth_bank | natural=gully [0x10115  resolution 23]
+natural=cliff | natural=earth_bank | natural=gully [0x10115  resolution 23] 
+# cutting=*  Участок шоссе или дороги, который врезан значительно ниже уровня окружающей земли. 
 natural=ridge [0x1011B  resolution 21] #хребет или перевал
 barrier=retaining_wall [0x1011a resolution 24] # стена, укрепляющая обрыв
 amenity=grave_yard | landuse=cemetery  | barrier=city_wall | barrier=wall | barrier=fence [0x10012 resolution 23 continue]
