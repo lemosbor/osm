@@ -8,6 +8,9 @@ highway=* & name=* { set mkgmap:street='${name}' }
 # соркащение названий улиц
 highway=* { name '${name|subst:"переулок=>пер."|subst:"километр=>км"|subst:"проектируемый=>про."|subst:"улица=>ул."|subst:"дублер=>дуб"|subst:"дублёр=>дуб"|subst:"мост=>м."|subst:"gate=>ул."|subst:"проспект=>пр-т"|subst:"проезд=>пр-д"|subst:"разъезд=>раз."|subst:"разворот=>раз."|subst:"тракт=>тр-т"|subst:"площадь=>пл."|subst:"имени=>им."|subst:"бульвар=>бл-р"|subst:"шоссе=>ш."|subst:"дорога=>дор."|subst:"тупик=>туп."|subst:"микрорайон=>мкр"|subst:"аллея=>алл."|subst:"линия=>лин."|subst:"(дублер)=>(дб.)"|subst:"набережная=>наб."|subst:"Rue=>ул."|subst:"Allée=>алл."|subst:"Place=>пл."|subst:"Passage=>пер."|subst:"Pont=>м."|subst:"Quai=>наб."|subst:"Avenue=>пр-т"|subst:"Boulevard=>бл-р"|subst:"Impasse=>пер."|subst:"Cours=>бл-р"|subst:"Chemin=>пр-д"|subst:"Route=>дор."|subst:"La Grande=>Б."|subst:"Большая=>Б."|subst:"Grand=>Б."|subst:"Большая=>Б."|subst:"Большой=>Б."|subst:"Малая=>М."|subst:"Малый=>М."|subst:"de Gaulle=>Де Голля"|subst:"général=>ген."|subst:"Gеnеral=>ген."|subst:"de la République=>Республики"|subst:"Jean Jaurès=>Жан Жореса"|subst:"Charles=>Шарля"}' }
 
+
+bridge=* & (highway=bridleway | highway=track | highway=path | highway=footway) [0x19 resolution 23 continue]
+
 # Круговое движение
 junction=roundabout & (highway=motorway | highway=motorway_link) [0x01 road_class=4 road_speed=2 resolution 22  ] # скорость можно увеличить до 7, что означает, что нет лимита
 junction=roundabout & (highway=trunk | highway=trunk_link) [0x02 road_class=4 road_speed=2 resolution 22  ]
@@ -143,8 +146,8 @@ railway=rail & tunnel!=yes & (trainroute=yes | highspeed=yes | usage=main) [0x10
 railway=rail & tunnel!=yes & (trainroute=yes | highspeed=yes | usage=main) [0x14 resolution 20 continue]
 railway=rail & tunnel!=yes & (trainroute=yes | highspeed=yes | usage=main) [0x10114 resolution 20]
 railway=rail & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x10015 resolution 22-21 continue with_actions]
-(railway=abandoned | railway=rail) & highway!=* & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x14 resolution 23 continue]
-(railway=abandoned | railway=rail) & highway!=* & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x10114 resolution 23]
+(railway=abandoned | railway=rail | railway=disused) & highway!=* & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x14 resolution 23 continue]
+(railway=abandoned | railway=rail | railway=disused) & highway!=* & tunnel!=yes & !(trainroute=yes | highspeed=yes | usage=main) [0x10114 resolution 23]
 
 railway=subway & (layer>0 | layer!=*)  [0x24 resolution 22]
 railway=tram [0x2e resolution 22]
@@ -206,7 +209,7 @@ man_made=embankment | embankment=yes [0x10004 resolution 22 continue]
 #building=shed | building=hut | building=garage | building=garages | building=service | building=stable | building:cladding=wood | building:material=wood [0x29 resolution 23 continue]
 
 bridge=* & bridge!=no & (highway=motorway | highway=primary | highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service | railway=rail | railway=tram)  & area!=yes [0x2b resolution 24 continue]
-bridge=* & (highway=bridleway | highway=track | highway=path | highway=footway) [0x19 resolution 23 continue]
+
 bridge=* & ( highway=track | highway=path ) [0x19 resolution 23 continue]
 
 # include 'inc/contours';

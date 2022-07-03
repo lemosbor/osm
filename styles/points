@@ -268,7 +268,7 @@ amenity=theatre [0x2d01 resolution 24] # театр
 amenity=nightclub {name '${name} (ночной клуб)' } [0x2D02 resolution 24] # ночной клуб
 amenity=bicycle_rental [0x2C1A resolution 24] # прокат велосипедов велопрокат
 sport=billiards {name '${name} (бильярд)' }  [0x2D0C resolution 24] # бильярд
-sport=tennis & access!=private [0x2D05 resolution 24] # теннис
+sport=tennis & access!=private & building!=* [0x2D05 resolution 24] # теннис
 amenity=winter_sports | sport=skiing [0x2D06 resolution 24] # лыжи
 leisure=bowling_alley {name '${name} (боулинг)' } [0x2D07 resolution 24 continue] # боулинг
 sport=laser_tag | leisure=amusement_arcade  {name '${name} (игровая)' } [0x2D07 resolution 24] # боулинг
