@@ -5,7 +5,7 @@ java -Xmx9000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=
 java -Xmx9000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=1400000 --mapid=63211001 --geonames-file=cities15000.txt --polygon-file=rhone-alpes.poly rhone-alpes-latest.osm.pbf
 
 java -Xmx9000m -jar splitter.jar --output=pbf --output-dir=splitter --max-nodes=1400000 --mapid=63221001 --geonames-file=cities15000.txt --polygon-file=russia.poly russia-latest.osm.pbf
-
+6
 cd C:\mkgmap
 java -Xmx9000M -jar mkgmap.jar -c osm.args 6324.typ *.osm.pbf
 
