@@ -1,0 +1,168 @@
+#include 'inc/address';
+name=* {set name='${name|subst:"лесопарк=>л—п"|subst:"микрорайон=>мкр"|subst:"завод=>з."|subst:"Завод=>з."|subst:"Площадь=>пл."|subst:"площадь=>пл."|subst:"парк=>п."|subst:"Парк=>п."|subst:"озеро=>оз."|subst:"пруд=>пр."}' }
+
+# размер одной единицы площади в квадратных метрах на определенной долготе:
+# м2		долгота
+# 5,71		0
+# 4,03		45
+# 3,2		55,7
+# 2,85		60
+# 0,5		85
+
+# 31 - 100 - сотка
+# 3 125 - 10 000 - гектар
+# 312 500 - 1 000 000 - км2
+
+mkgmap:cache_area_size >= 0				{set razmer = 24}
+mkgmap:cache_area_size >= 313			{set razmer = 23} # размер участка
+mkgmap:cache_area_size >= 3125			{set razmer = 22} # размер Стадиона
+mkgmap:cache_area_size >= 31250			{set razmer = 21} # размер Зарядья
+mkgmap:cache_area_size >= 312500		{set razmer = 17} # размер Нескучного сада
+mkgmap:cache_area_size >= 3125000		{set razmer = 16} # размер Битцевского леса
+mkgmap:cache_area_size >= 31250000		{set razmer = 14} # Размер Москвы
+
+natural=bay {set toponym=water}
+toponym=water & area_size() > 200000000 [0x3b resolution 16]
+toponym=water & area_size() > 50000000 [0x3b resolution 20]
+toponym=water & area_size() < 50000000 [0x3b resolution 22]
+waterway=dock {add natural=water}
+#toponym=* & name=*  [0x3b resolution 24 continue]
+# Удалить подземные области
+building=* & (location=underground | parking=underground) {delete building}
+amenity=* & (location=underground | parking=underground) {delete amenity}
+miltary=* & location=underground {delete military}
+shop=* & location=underground {delete shop}
+#amenity=fuel {delete amenity}
+
+place=city [0x02 resolution 10-18 continue] #город на большом масштабе
+place=town [0x02 resolution 15-18 continue] #город на большом масштабе
+((place=village | place=hamlet) & residential!=*) & area_size() >=300000 [0x03 resolution 10-19 continue] #деревни на большом масштабе
+((place=village | place=hamlet) & residential!=*) | residential=rural [0x03 resolution 20]
+(landuse=residential | landuse=commercial) & building=yes {delete landuse}
+(landuse=residential | landuse=commercial) & place=* & name!=* {delete place}
+(landuse=residential | landuse=commercial) & area_size() >=500000 [0x02 resolution 15-24 continue]
+(landuse=residential | landuse=commercial) & area_size() >=250000 & area_size() < 500000 [0x02 resolution 16-24 continue]
+(landuse=residential | landuse=commercial) & area_size() >=50000 & area_size() < 250000 [0x02 resolution 18-24 continue]
+(landuse=residential | landuse=commercial) & area_size() < 50000 [0x02 resolution 19-24 continue]
+
+aeroway=runway [0x0C resolution 22]
+aeroway=airport [0x09 resolution 18 continue] #Аэропорт
+aeroway=aerodrome | military=airfield [0x09 resolution 20 continue ]
+
+(amenity=marketplace | landuse=retail) & area_size() >=20000 & building!=* [0x04 resolution 18-24 continue]
+(amenity=marketplace | landuse=retail) & building!=* [0x04 resolution 20]
+
+amenity=parking & access=private [0x0f resolution 23] # приватная парковка
+amenity=parking & fee=yes [0x11 resolution 23] # парковка платная
+amenity=parking & (building!=* | fee=no) [0x05 resolution 22] # парковка
+
+place=allotments [0x06 resolution 22]
+(amenity=college | amenity=school | amenity=university | amenity=kindergarten) & building!=* [0x0a resolution 23]
+landuse=industrial | landuse=garages [0x0c resolution 20] #Заводы
+landuse=construction | landuse=greenfield | landuse=brownfield [0x0d resolution 21 continue] #Стройка
+landuse=religious [0x10 resolution 22]
+
+#forest_from_relation=yes {name '${fname}'} [0x50 resolution 16-18 continue]
+#toponym=forest {name '${name}'} [0x50 resolution 16-18 continue]
+#boundary = protected_area & name=Veluwe  [0x50 resolution 14-17 continue]
+
+(landuse=forest | natural=wood) [0x48 resolution 14-15 continue]
+(landuse=forest | natural=wood) & area_size() > 500000 [0x15 resolution 14-19 continue]
+(landuse=forest | natural=wood) [0x14 resolution 20 continue]
+#(landuse=forest | natural=wood) & area_size()< 250000 [0x14 resolution 23 continue]
+#(landuse=forest | natural=wood) & area_size() >=250000 [0x23 resolution 23 continue]
+#(leisure=garden & garden:type=botanical)[0x17 resolution 20 continue]
+leisure=park | tourism=zoo [0x17 resolution 20 continue]
+
+natural=heath [0x16 resolution 21]
+(leisure=pitch | leisure=track | leisure=sports_center | leisure=sports_centre | leisure=ice_rink | leisure=water_park | leisure=stadium | leisure=track | leisure=golf_course) & building!=* [0x19 resolution 22]
+amenity=grave_yard | landuse=cemetery   [0x1a resolution 23 continue]
+(amenity=grave_yard | landuse=cemetery) & natural!=* [0x15 resolution 23]
+landuse=grass | landuse=village_green | landuse=recreation_ground | natural=grassland | landuse=meadow | landcover=grass [0x1e resolution 22]
+natural=fell [0x1f resolution 20]
+
+building=ruins | building=collapsed | ( building=* & (ruins=yes | historic=ruins))[0x22 resolution 23]
+landuse=railway [0x23 resolution 23]
+landuse=quarry | man_made=surface_mine [0x2d resolution 23] # карьер
+leisure=resort | leisure=summer_camp | tourism=camp_site | tourism=caravan_site [0x2e resolution 22] # не обязательно кемпинг
+
+# squares, plazas, bridges
+waterway=dam  [0x0e resolution 22]
+place=square  [0x0e resolution 23]
+highway=pedestrian & (area=yes | mkgmap:mp_created=true) [0x0e resolution 23]
+area:highway=bridge | man_made=bridge | building=bridge | highway=pedestrian | highway=service [0x0e resolution 23]
+area:highway=* [0x0e resolution 23]
+man_made=pier  [0x0e resolution 23 continue]
+(public_transport=platform | railway=platform) & (layer>-1 | layer!=*)  & area=yes { name '${name}' | '${ref}' } [0x0e resolution 23]
+#man_made=reinforced_slope | man_made=groyne [0x27 resolution 23]
+
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) & area_size() >=50000000 [0x3c resolution 14 continue]
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank)& area_size() >=500000 [0x3c resolution 14-18 continue]
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) & area_size() >=500000 [0x3c resolution 19 continue]
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) & area_size() >=50000  [0x3c resolution 18-21 continue]
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) & area_size() >=50000 [0x3c resolution 22 continue]
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) [0x3c resolution 20-21 continue]
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) [0x3c resolution 22 continue]
+(natural=water | landuse=reservoir | natural=sea | landuse=basin | waterway=riverbank) & intermittent=yes [0x2f resolution 22 continue] # разливы рек
+
+(leisure=swimming_pool |  sport=swimming) & building!=* [0x3c resolution 22 continue]
+(waterway=canal | waterway=river | waterway = dock)   & natural!=water   [0x3c resolution 22 continue] 
+(waterway=drain | waterway=stream)  & natural!=water   [0x3c resolution 24]
+waterway=wadi [0x40 resolution 21] # пустое русло
+
+#лыжи
+piste:type=downhill & piste:difficulty=novice [0x31 resolution 22 continue] #зелёная трасса
+piste:type=downhill & piste:difficulty=easy [0x32 resolution 22 continue] #синяя трасса 
+piste:type=downhill & (piste:difficulty=intermediate | piste:difficulty=advanced) [0x33 resolution 22 continue] #красная трасса 
+piste:type=downhill & piste:difficulty=expert  [0x34 resolution 22 continue] #чёрная трасса
+piste:type=downhill & (piste:difficulty=freeride | piste:difficulty=extreme) [0x35 resolution 22 continue] #фрирайд трасса 
+
+
+wetland=tidalflat | tidal=yes | natural=shoal [0x2c resolution 21]  #отмель
+wetland=* & (natural!=* | landuse!=*) [0x3f resolution 21] #болота
+natural=wetland | wetland=* [0x3e resolution 22]
+#wetland=tidalflat [0x52 resolution 22]
+#natural=marsh | [0x51 resolution 23]
+#natural=wetland  [0x3e resolution 23]
+
+man_made=clearcut | landuse=logging [0x41 resolution 23] # вырубка
+natural=glacier [0x4d resolution 19] 
+landuse=allotments [0x4e resolution 22] # наделы
+natural=scrub [0x4f resolution 21]
+landuse=plant_nursery [0x50 resolution 22]
+
+((natural=beach | leisure=beach_resort) & (surface=fine_gravel | surface=gravel | surface=pebblestone)) | natural=shingle [0x2b resolution 22] # галька
+leisure=playground | natural=beach | leisure=beach_resort | natural=sand [0x53 resolution 22]
+
+#natural=land [0x27 resolution 20]
+natural=scree [0x29 resolution 22] # курумник
+natural=bedrock | natural=cliff | natural=rock | natural=bare_rock [0x27 resolution 23]
+
+landuse=orchard | leisure=garden [0x18 resolution 22] # сад
+landuse=vineyard [0x1b resolution 20]
+
+#landuse=greenhouse_horticulture | 
+building= greenhouse [0x08 resolution 23]
+
+landuse=landfill [0x52 resolution 23]
+
+landuse=farm | landuse=farmland | landuse=farmyard | place=farm [0x07 resolution 21]
+
+# building tags
+#include 'inc/bag';
+
+(amenity=hospital | amenity=clinic | healthcare = hospital) & building!=* [0x0b resolution 20]
+
+building=no {delete building}
+(building=sty | building=pavilion | building=cabin | building=kiosk | building=bungalow | building=shed | building=hut | building=garage | building=garages | building=service | building=stable | building:cladding=wood | building:material=wood) & area_size() >=20000 [0x21 resolution 23]
+building=sty | building=pavilion | building=cabin | building=kiosk | building=bungalow | building=shed | building=hut | building=garage | building=garages | building=service | building=stable | building:cladding=wood | building:material=wood [0x21 resolution 24]
+building=* & area_size() >=20000 [0x13 resolution 22] # большие дома
+building=* & area_size() >=10000 [0x13 resolution 23] # большие дома
+building=* {delete name} [0x13 resolution 24] # дома
+
+natural=background [0x010100 resolution 12]
+
+<finalize>
+# The finalizer section is executed for each element when a rule with an element type matches
+include 'inc/compat_polygons';
+

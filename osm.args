@@ -1,0 +1,70 @@
+# документация по настройкам: https://www.mkgmap.org.uk/doc/options
+family-id: 6324
+product-id: 6
+description: LeOSM(151022)
+series-name: LeOSM(151022)
+family-name: LeOSM
+area-name: OSM_RUS
+country-name: Россия
+country-abbr: RUS
+style-file: Styles
+draw-priority: 20 #приоритет карты (в случае использования нескольких)
+
+#overview-mapname: 63240051 #имя обзорной карты
+#определение морей http://osm2.pleiades.uni-wuppertal.de/sea/latest/
+precomp-sea: sea.zip 
+generate-sea: land-tag=natural=background
+#определение границ http://osm2.pleiades.uni-wuppertal.de/bounds/latest/
+bounds: bounds.zip 
+#location-autofill=bounds
+#автоматическое указание адреса в зависимости от нахождения объекта в определенной области
+location-autofill: is_in,nearest 
+housenumbers
+#кодовая страница для отображения кириллицы
+code-page: 1251 
+lower-case
+
+#отображение профиля высот
+#show-profiles: 1 
+#файл профиля высот
+#dem: R.zip 
+#dem-dists: 9942,9942,9942,13248,44176
+#overview-dem-dist=88368 
+#оптимизация полигонов
+reduce-point-density: 4 
+#оптимизация полигонов
+reduce-point-density-polygon: 8
+add-pois-to-areas
+#положение подписи объекта
+#pois-to-areas-placement=always=middle 
+add-pois-to-lines
+link-pois-to-ways
+# исключить из индексации узлы
+poi-excl-index=0x2800-0x290F
+#исключение дублирования соседних точек с одинаковыми названиями
+nearby-poi-rules-config = styles\nearbypoi 
+#оптимизация обзорной карты
+improve-overview 
+# минимальный размер полигона для разных разрешений. 0 - фильтр размера не применяется
+polygon-size-limits=22:4, 17:2, 15:0 
+#порядок прорисовки данных в соответствии с osm
+preserve-element-order 
+#порядок взятия имен (сначала русские, потом обычные, потом другие)
+name-tag-list = name:ru,name,name:en,int_name 
+#обозначение съездов
+process-destination 
+keep-going
+#создание обзорной карты
+tdbfile 
+route
+index
+remove-ovm-work-files
+
+gmapsupp
+copyright-message: Ilya Leonov & OpenStreetMap.org
+
+#Проверки
+#report-roundabout-issues=all #круговые движения
+#report-routing-islands #изолированные дороги
+#report-similar-arcs #дубли дорог
+#report-dead-ends #тупики
