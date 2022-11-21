@@ -90,7 +90,7 @@ leisure=resort | leisure=summer_camp | tourism=camp_site | tourism=caravan_site 
 waterway=dam  [0x0e resolution 22]
 place=square  [0x0e resolution 23]
 highway=pedestrian & (area=yes | mkgmap:mp_created=true) [0x0e resolution 23]
-area:highway=bridge | man_made=bridge | building=bridge | highway=pedestrian | highway=service [0x0e resolution 23]
+area:highway=bridge | man_made=bridge | building=bridge | highway=pedestrian | highway=service [0x0e resolution 23] # Мосты
 area:highway=* [0x0e resolution 23]
 man_made=pier  [0x0e resolution 23 continue]
 (public_transport=platform | railway=platform) & (layer>-1 | layer!=*)  & area=yes { name '${name}' | '${ref}' } [0x0e resolution 23]
@@ -119,6 +119,7 @@ piste:type=downhill & (piste:difficulty=freeride | piste:difficulty=extreme) [0x
 
 
 wetland=tidalflat | tidal=yes | natural=shoal [0x2c resolution 21]  #отмель
+landuse = salt_pond # соленое озеро
 wetland=* & (natural!=* | landuse!=*) [0x3f resolution 21] #болота
 natural=wetland | wetland=* [0x3e resolution 22]
 #wetland=tidalflat [0x52 resolution 22]
@@ -165,4 +166,3 @@ natural=background [0x010100 resolution 12]
 <finalize>
 # The finalizer section is executed for each element when a rule with an element type matches
 include 'inc/compat_polygons';
-
