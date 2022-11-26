@@ -83,7 +83,7 @@ brand=* {set name='${brand}' }
 
 name=* {set name='${name|subst:""=>"}' } # убрать из названий кавычки https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html 
 # сокращения названий мест
-name=* {set name='${name |subst:"Eglise=>ц."|subst:"Администрация=>Ад."|subst:"отдел=>от."|subst:"Верхний=>вер."|subst:"Нижний=>ниж."|subst:"затон=>зт."|subst:"Затон=>зт."|subst:"районный=>р-й"|subst:"Центр=>Ц"|subst:"поликлиника=>плк."|subst:"госпиталь=>гс."|subst:"больница=>бол."|subst:"городская=>гор."|subst:"ИП=>"|subst:"площадка=>пл."|subst:"усадьба=>ус."|subst:"Лесопарк=>л—п"|subst:"парк=>п."|subst:"имени=>им."|subst:"Памятник=>пам."|subst:"театр=>т."|subst:"Квартал=>кв."|subst:"Завод=>з."|subst:"Парк=>п."|subst:"Esplanade=>пл."|subst:"Московский государственный=>МГ"|subst:"Jardin=>Сад"|subst:"Большой=>Б."|subst:"Многофункциональный центр предоставления государственных и муниципальных услуг=>МФЦ"|subst:"Lac=>оз."|subst:"Parc=>Парк"|subst:"Square=>скв."|subst:"Больница=>бл."|subst:"гора=>г."|subst:"долина=>дол."|subst:"Жилой=>Ж"|subst:"«=>"|subst:"»=>"|subst:"Институт=>И"|subst:"камень=>кам."|subst:"комплекс=>К"|subst:"курорт=>кур."|subst:"лагуна=>лаг."|subst:"лесопарк=>л—п"|subst:"лиман=>лим."|subst:"микрорайон=>мкр"|subst:"мыс=>м."|subst:"оазис=>оаз."|subst:"озеро=>оз."|subst:"озеро=>оз."|subst:"остров=>о."|subst:"острова=>о-ва"|subst:"отмель=>отм."|subst:"памятник=>пам."|subst:"перевал=>пер."|subst:"пещера=>пещ."|subst:"плоскогорье=>плскг."|subst:"плотина=>плот."|subst:"Площадь=>пл."|subst:"площадь=>пл."|subst:"побережье=>побер."|subst:"полуостров=>п-ов"|subst:"порог=>пор."|subst:"посёлок=>п."|subst:"проектируемый=>проек."|subst:"пролив=>прол."|subst:"проспект=>пр."|subst:"пруд=>пр."|subst:"улица=>ул."|subst:"пустыня=>пуст."|subst:"Санаторий=>сн."|subst:"село=>с."|subst:"Сквер=>ск."|subst:"сквер=>ск."|subst:"совхоз=>свх."|subst:"Университет=>Ун."|subst:"урочище=>уроч."|subst:"Усадьба=>ус."|subst:"фабрика=>ф."|subst:"центр=>Ц"|subst:"Часовня=>Чс."}' }
+name=* {set name='${name |subst:"Eglise=>ц."|subst:"Администрация=>Ад."|subst:"отдел=>от."|subst:"Верхний=>вер."|subst:"Нижний=>ниж."|subst:"затон=>зт."|subst:"Затон=>зт."|subst:"районный=>р-й"|subst:"Центр=>Ц"|subst:"поликлиника=>плк."|subst:"госпиталь=>гс."|subst:"больница=>бол."|subst:"городская=>гор."|subst:"ИП=>"|subst:"площадка=>пл."|subst:"усадьба=>ус."|subst:"Лесопарк=>л—п"|subst:"парк=>п."|subst:"имени=>им."|subst:"Памятник=>пам."|subst:"театр=>т."|subst:"Квартал=>кв."|subst:"Завод=>з."|subst:"Парк=>п."|subst:"Esplanade=>пл."|subst:"Московский государственный=>МГ"|subst:"Jardin=>Сад"|subst:"проезд=>пр-д"|subst:"Большой=>Б."|subst:"Многофункциональный центр предоставления государственных и муниципальных услуг=>МФЦ"|subst:"Lac=>оз."|subst:"Parc=>Парк"|subst:"Square=>скв."|subst:"Больница=>бл."|subst:"гора=>г."|subst:"долина=>дол."|subst:"Жилой=>Ж"|subst:"«=>"|subst:"»=>"|subst:"Институт=>И"|subst:"камень=>кам."|subst:"комплекс=>К"|subst:"курорт=>кур."|subst:"лагуна=>лаг."|subst:"лесопарк=>л—п"|subst:"лиман=>лим."|subst:"микрорайон=>мкр"|subst:"мыс=>м."|subst:"оазис=>оаз."|subst:"озеро=>оз."|subst:"озеро=>оз."|subst:"остров=>о."|subst:"острова=>о-ва"|subst:"отмель=>отм."|subst:"памятник=>пам."|subst:"перевал=>пер."|subst:"пещера=>пещ."|subst:"плоскогорье=>плскг."|subst:"плотина=>плот."|subst:"Площадь=>пл."|subst:"площадь=>пл."|subst:"побережье=>побер."|subst:"полуостров=>п-ов"|subst:"порог=>пор."|subst:"посёлок=>п."|subst:"проектируемый=>проек."|subst:"пролив=>прол."|subst:"проспект=>пр."|subst:"пруд=>пр."|subst:"улица=>ул."|subst:"пустыня=>пуст."|subst:"Санаторий=>сн."|subst:"село=>с."|subst:"Сквер=>ск."|subst:"сквер=>ск."|subst:"совхоз=>свх."|subst:"Университет=>Ун."|subst:"урочище=>уроч."|subst:"Усадьба=>ус."|subst:"фабрика=>ф."|subst:"центр=>Ц"|subst:"Часовня=>Чс."}' }
 
 sport=* {set sport='${sport|subst:"table_tennis=>наст.теннис"|subst:"footboll=>футбол"|subst:"ice_hockey=>хоккей"|subst:"volleyball=>воллейбол"|subst:"fitness=>фитнес"|subst:"athletics=>тренажеры"|subst:"futsal=>мини-футбол"|subst:"basketball=>баскетбол"|subst:"soccer=>футбол"|subst:"running=>бег"|subst:"hockey=>хоккей"|subst:"multi=>тренажеры"|subst:"chess=>шахматы"|subst:"hockey=>хоккей"}' }
 
@@ -99,6 +99,7 @@ name!=* & operator=* {set name='${operator}'}
 name=* & phone=* {set name='${name} #'}
 
 #ГОРОДА указать 
+place=* {set name='${name|subst:"мкр=>"|subst:"рынок=>"}'}
 # 0x0100
 # 0x0200
 # 0x0300
@@ -281,7 +282,7 @@ tourism=caravan_site {name '${name} (стоянка)' | 'Стоянка' } [0x2B
 leisure=beach_resort | natural=beach | leisure=swimming_area {set name='${name|subst:"Пляж=>"|subst:"beach=>"}'} #убрать из названия очевидное
 amenity=library {set name='${name|subst:"Библиотека=>"|subst:"library=>"}'} #убрать из названия очевидное
 tourism=museum | tourism=gallery | amenity=arts_centre  {set name='${name|subst:"Музей=>"|subst:"museum=>"}'} #убрать из названия очевидное
-historic=memorial | historic=monument| historic=aircraft | tourism=artwork | tourism=locomotive| tourism=ship | man_made=obelisk  {set name='${name|subst:"Памятник=>"|subst:"Монумент=>"|subst:"Мемориал=>"}'} #убрать из названия очевидное
+historic=memorial | historic=monument| historic=aircraft | tourism=artwork | tourism=locomotive| tourism=ship | man_made=obelisk  {set name='${name|subst:"Памятник=>"|subst:"Монумент=>"|subst:"Мемориал=>"|subst:"Героям=>"|subst:"героям=>"}'} #убрать из названия очевидное
 leisure=garden | leisure=park {set name='${name|subst:"Сад=>"|subst:"Парк=>"|subst:"Садик=>"}'} #убрать из названия очевидное
 amenity=school  {set name='${name|subst:"Школа=>"|subst:"школа=>"|subst:"school=>"}'} #убрать из названия очевидное
 amenity=kindergarten  {set name='${name|subst:"Детский сад=>"|subst:"Садик=>"|subst:"kindergarten=>"}'} #убрать из названия очевидное
@@ -410,7 +411,8 @@ craft=winery | drink:wine=yes | tourism=wine_cellar | shop=winery {name '${name}
 
 (shop=convenience | shop=pasta | shop=seafood | shop=deli | shop=farm | shop=general) & (name!=* | name ~ '.*(магазин|Магазин).*') {name '${name} (маг.)' | 'маг.' } [0x2E01 resolution 24] # магазинчики
 shop=convenience | shop=pasta | shop=seafood | shop=deli | shop=farm | shop=general {name '${name} (магазин)'} [0x2E02 resolution 24] # магазины ПОМЕНЯТЬ
-shop=supermarket | (shop=mall & razmerpoi > 22) {name '${name} (ТЦ)' | 'ТЦ' } [0x2e03 resolution 24 continue] 
+shop=supermarket {name '${name} (с.марк)' | 'с.маркет' } [0x2e03 resolution 24 continue] 
+shop=mall & razmerpoi > 22 {name '${name} (ТЦ)' | 'ТЦ' } [0x2e03 resolution 24 continue] 
 shop=dairy {name '${name} (молоко)' | 'Молоко' } [0x2E01 resolution 24 continue] # молоко
 shop=butcher {name '${name} (мясо)' | 'Мясо' } [0x2E01 resolution 24 continue] # мясо
 shop=greengrocer {name '${name} (овощи и фрукты)' | 'Овощи и фрукты' } [0x2E01 resolution 24 continue] # овощи и фрукты
@@ -509,10 +511,10 @@ amenity=fuel {set name='${name|subst:"Газпром Нефть=>Г"|subst:"Та
 
 amenity=fuel & fuel:diesel=no {delete 'name'} [0x2811 resolution 23 continue] #заправки без дизеля (МАРШРУТ)
 amenity=fuel & fuel:diesel=no {name'(без дизеля) ${brand} ' |  '(без дизеля) ${name}' | '(без дизеля) ${operator}' } [0x2f01 resolution 24]
-amenity=fuel { name '${brand}' | '${operator} ' | '${name} ' } [0x2804 resolution 23 continue] #заправки (МАРШРУТ)
+amenity=fuel { name '${name}' | '${operator} ' | '${brand} ' } [0x2804 resolution 23 continue] #заправки (МАРШРУТ)
 #amenity=charging_station { name '${name} (${voltage}v)' | '${name}' | '${voltage}v' } [0x2f16 resolution 19] # Электрозаправки
-amenity=fuel & shop=* { name '${brand} (+магазин)' | '${name} (+магазин)' | '${operator} (+магазин)'} [0x2e06 resolution 24 continue] #заправки с магазинами (КАТАЛОГ)
-amenity=fuel & shop!=* { name '${brand}' | '${name}' | '${operator}'} [0x2f01 resolution 24 continue] #заправки без магазина (КАТАЛОГ)
+amenity=fuel & shop=* { name '${name} (+магазин)' | '${brand} (+магазин)' | '${operator} (+магазин)'} [0x2e06 resolution 24 continue] #заправки с магазинами (КАТАЛОГ)
+amenity=fuel & shop!=* { name '${name}' | '${brand}' | '${operator}'} [0x2f01 resolution 24 continue] #заправки без магазина (КАТАЛОГ)
 amenity=fuel {delete 'name'}  [0x6804 resolution 22-22] #заправки без магазина (КРУПНЫЙ)
 
 amenity=ferry_terminal | amenity=ferry | amenity=cable_ferry | ferry=yes [0x2806 resolution 21 continue] # переправы (КРУПНЫЙ)

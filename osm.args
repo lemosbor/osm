@@ -7,7 +7,7 @@ family-name: LeOSM
 area-name: OSM_RUS
 country-name: Россия
 country-abbr: RUS
-style-file: Styles
+style-file: osm/styles
 draw-priority: 20 #приоритет карты (в случае использования нескольких)
 
 #overview-mapname: 63240051 #имя обзорной карты

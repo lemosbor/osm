@@ -42,7 +42,10 @@ mkgmap:exit_hint = true
 
 bridge=* & (highway=bridleway | highway=track | highway=path | highway=footway) [0x19 resolution 23 continue]
 
+
 # Круговое движение (чтобы озвучивалось навигатором необходимо дать класс 0x0c) ПРОВЕРИТЬ
+
+
 # junction=roundabout & (highway=motorway | highway=motorway_link) [0x0c road_class=4 road_speed=2 resolution 24 continue with_actions] # скорость можно увеличить до 7, что означает, что нет лимита
 # junction=roundabout & (highway=trunk | highway=trunk_link) [0x0c road_class=4 road_speed=2 resolution 24 continue with_actions]
 # junction=roundabout & (highway=primary | highway=primary_link) [0x0c road_class=3 road_speed=2 resolution 24 continue with_actions] 
@@ -50,7 +53,8 @@ bridge=* & (highway=bridleway | highway=track | highway=path | highway=footway) 
 # junction=roundabout & (highway=tertiary | highway=tertiary_link) [0x0c road_class=1 road_speed=1 resolution 24 continue with_actions]
 # junction=roundabout & (highway=unclassified | highway=minor | highway=service) [0x0c road_class=1 road_speed=1 resolution 24 continue with_actions]
 # junction=roundabout & highway=*  [0x0c road_class=0 road_speed=1 resolution 24 continue with_actions]
-junction=roundabout  [0x0c road_class=1 road_speed=1 resolution 24 continue with_actions]
+junction=roundabout  [0x0c road_class=0 road_speed=0 resolution 24 continue with_actions]
+junction=roundabout { add mkgmap:road-speed = '-1' }
 junction=roundabout {set access=no} # не использовать для построения движения больше (только для отображения дорог)
 
 #объеденить типы дорог
@@ -106,7 +110,7 @@ highway=construction  {add access = no; add mkgmap:dead-end-check = false} [0x07
 (highway=tertiary | highway=unclassified | highway=residential | highway=service) & (oneway=yes | oneway=1 | oneway=true | oneway=-1) [0x10005 resolution 24 continue with_actions]
 
 # Показать насыпи
-embankment=yes & highway!=path & highway!=footway & highway != steps [0x10060 resolution 24 continue with_actions]
+# embankment=yes & highway!=path & highway!=footway & highway != steps [0x10060 resolution 24 continue with_actions]
 
 # Показать парковки (АВТО)
 (highway=secondary | highway=tertiary | highway=unclassified | highway=residential | highway=service) & (parking:lane:right=parallel | parking:lane:right=diagonal | parking:lane:right=perpendicular | parking:lane:right=marked) [0x10010 resolution 24 continue with_actions]

@@ -119,7 +119,7 @@ piste:type=downhill & (piste:difficulty=freeride | piste:difficulty=extreme) [0x
 
 
 wetland=tidalflat | tidal=yes | natural=shoal [0x2c resolution 21]  #отмель
-landuse = salt_pond # соленое озеро
+landuse = salt_pond [0x3f resolution 21] # соленое озеро ДОБАВИТЬ
 wetland=* & (natural!=* | landuse!=*) [0x3f resolution 21] #болота
 natural=wetland | wetland=* [0x3e resolution 22]
 #wetland=tidalflat [0x52 resolution 22]
